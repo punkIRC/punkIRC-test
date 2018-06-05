@@ -1,0 +1,1 @@
+RPL_WELCOME(nick, user, host) ::= ":<host> 001 <nick> :Welcome to the Internet Relay Network <nick>!<user>@<host>"

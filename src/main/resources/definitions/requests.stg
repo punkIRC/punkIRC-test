@@ -1,0 +1,2 @@
+nick(nickname) ::= "NICK <nickname>\r\n"
+user(username, realname) ::= "USER <username> * * :<realname>\r\n"
