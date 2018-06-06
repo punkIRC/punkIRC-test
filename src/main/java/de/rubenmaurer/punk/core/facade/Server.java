@@ -4,6 +4,11 @@ import de.rubenmaurer.punk.core.util.Settings;
 
 import java.io.IOException;
 
+/**
+ * Class for representing an irc server.
+ *
+ * @author Ruben Maurer
+ */
 public class Server {
 
     /**
@@ -16,6 +21,9 @@ public class Server {
      */
     private Process server;
 
+    /**
+     * The constant self.
+     */
     private static Server self;
 
     /**
@@ -27,7 +35,12 @@ public class Server {
         this.path = path;
     }
 
-    public static boolean start() {
+    /**
+     * Start boolean.
+     *
+     * @return the boolean
+     */
+    static boolean start() {
         if (self != null) {
             try {
                 self.server = Runtime.getRuntime().exec(self.path);
@@ -42,7 +55,12 @@ public class Server {
         return false;
     }
 
-    public static boolean stop() {
+    /**
+     * Try to stop the server
+     *
+     * @return server has stopped?
+     */
+    static boolean stop() {
         if (self != null) {
             return !self.server.destroyForcibly().isAlive();
         }
@@ -50,7 +68,12 @@ public class Server {
         return false;
     }
 
-    public static boolean isAlive() {
+    /**
+     * Is server alive?
+     *
+     * @return server alive?
+     */
+    static boolean isAlive() {
         if (self != null) {
             return self.server.isAlive();
         }
@@ -58,6 +81,11 @@ public class Server {
         return false;
     }
 
+    /**
+     * Create a new server.
+     *
+     * @param path the executables path
+     */
     public static void create(String path) {
         self = new Server(path);
     }
