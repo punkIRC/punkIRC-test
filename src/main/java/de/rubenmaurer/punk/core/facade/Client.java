@@ -165,7 +165,7 @@ public class Client {
      * @return is connected?
      * @throws Exception the exception
      */
-    private boolean isConnected() throws Exception {
+    public boolean isConnected() throws Exception {
         Timeout timeout = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, "connected", timeout);
 

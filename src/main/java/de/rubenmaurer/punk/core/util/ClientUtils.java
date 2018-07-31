@@ -35,4 +35,20 @@ public class ClientUtils {
         if (auth.length() != 0) messages.add(auth);
         return messages;
     }
+
+    public static String privateMessage(Client target, String message) {
+        return Template.get("privmsg")
+                .single("nickname", target.nickname())
+                .single("message", message).render();
+    }
+
+    public static String notice(Client target, String message) {
+        return Template.get("notice")
+                .single("nickname", target.nickname())
+                .single("message", message).render();
+    }
+
+    public static String quit(String message) {
+        return Template.get("quit").single("message", message).render();
+    }
 }
