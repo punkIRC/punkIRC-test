@@ -6,6 +6,7 @@ import de.rubenmaurer.punk.core.util.ClientPreset;
 import de.rubenmaurer.punk.core.util.ClientUtils;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -50,6 +51,7 @@ public class BasicConnection extends BaseTest {
     }
 
     @Test
+    @Disabled
     void partitionedConnect1() throws Exception {
         Client c = Client.create(ClientPreset.CHLOE);
 
@@ -60,6 +62,7 @@ public class BasicConnection extends BaseTest {
     }
 
     @Test
+    @Disabled
     void partitionedConnect2() throws Exception {
         Client c = Client.create(ClientPreset.CHLOE);
 

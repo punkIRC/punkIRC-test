@@ -1,8 +1,12 @@
 package de.rubenmaurer.punk.core.facade;
 
+import de.rubenmaurer.punk.Pricefield;
 import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.messages.Template;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Class for representing an irc server.
@@ -16,10 +20,17 @@ public class Server {
      */
     private String path;
 
+    private String[] args;
+
     /**
      * The Server process.
      */
     private Process server;
+
+    /**
+     * The amount of tries to shut the server down.
+     */
+    private int shutdownTries = 1;
 
     /**
      * The constant self.
@@ -43,12 +54,25 @@ public class Server {
     static boolean start() {
         if (self != null) {
             try {
-                self.server = Runtime.getRuntime().exec(self.path);
+                ProcessBuilder pb = new ProcessBuilder("java", "-jar", self.path);
+
+                if (!Settings.javaMode) {
+                    pb = new ProcessBuilder(self.path);
+                }
+
+                pb.redirectOutput(ProcessBuilder.Redirect.appendTo(
+                        new File(String.format("%s/%s/server_log.log", Settings.resultPath, Pricefield.ID))));
+
+                pb.redirectError(ProcessBuilder.Redirect.appendTo(
+                        new File(String.format("%s/%s/server_error.log", Settings.resultPath, Pricefield.ID))));
+
+                self.server = pb.start();
                 Thread.sleep(Settings.defaultServerStartDelay * 1000);
 
                 return self.server.isAlive();
             } catch (IOException | InterruptedException e) {
                 System.err.println(e.getMessage());
+                System.exit(-1);
             }
         }
 
@@ -62,7 +86,25 @@ public class Server {
      */
     static boolean stop() {
         if (self != null) {
-            return !self.server.destroyForcibly().isAlive();
+            try {
+                self.server.destroy();
+
+                while (self.server.isAlive()) {
+                    Thread.sleep(Settings.defaultServerStopDelay * 1000);
+
+                    if (self.shutdownTries < Settings.defaultServerShutdownTries) {
+                        self.server.destroy();
+                        continue;
+                    }
+
+                    self.server.destroyForcibly();
+                }
+
+                return self.server.isAlive();
+            } catch(InterruptedException e) {
+                System.err.println(e.getMessage());
+                System.exit(-1);
+            }
         }
 
         return false;

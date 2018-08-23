@@ -2,6 +2,7 @@ package de.rubenmaurer.punk.core.facade;
 
 import akka.actor.ActorSystem;
 import de.rubenmaurer.punk.core.akka.ConnectionManager;
+import de.rubenmaurer.punk.messages.Template;
 
 /**
  * Class for representing a test session.
@@ -24,7 +25,6 @@ public class Session {
         return initiated;
     }
 
-
     /**
      * Instantiates a new Session.
      *
@@ -36,17 +36,9 @@ public class Session {
         if (!initiated) {
             Server.create(executable);
             Client.connectionManager = ActorSystem.apply("pricefield").actorOf(ConnectionManager.props(hostname, port), "de.rubenmaurer.punk.test.connection-manager");
+
             initiated = true;
         }
-    }
-
-    /**
-     * Initiate a session.
-     *
-     * @param executable the servers executable
-     */
-    public static void initiate(String executable) {
-        initiate("localhost", 6667, executable);
     }
 
     /**
@@ -58,6 +50,15 @@ public class Session {
      */
     public static void initiate(String hostname, int port, String executable) {
         new Session(hostname, port, executable);
+    }
+
+    /**
+     * Terminate a session.
+     */
+    public static boolean terminate() {
+        Session.initiated = false;
+
+        return Session.stopServer();
     }
 
     /**
@@ -75,7 +76,12 @@ public class Session {
      * @return server stopped?
      */
     public static boolean stopServer() {
-        return Server.stop();
+        if (!Server.stop()) {
+            System.err.println(Template.get("UNABLE_TO_STOP_SERVER").render());
+            return false;
+        }
+
+        return true;
     }
 
     /**

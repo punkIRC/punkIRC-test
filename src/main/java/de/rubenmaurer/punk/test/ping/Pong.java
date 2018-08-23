@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class Pong extends BaseTest {
+public class Pong extends BaseTest {
 
     @Test
     void testPong() throws Exception {

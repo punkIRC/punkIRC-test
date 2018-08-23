@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class Ping extends BaseTest {
+public class Ping extends BaseTest {
 
     @Test
     void testPing() throws Exception {

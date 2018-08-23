@@ -4,6 +4,8 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.lang.management.ManagementFactory;
+
 /**
  * Helper for accessing string templates.
  *
@@ -39,7 +41,13 @@ public class Template {
      * @return the loaded template
      */
     public static Template get(String template) {
-        if (templates == null) templates = new STGroupFile("defs.stg");
+
+        if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug")) {
+            if (templates == null) templates = new STGroupFile("defs.stg");
+            return new Template(templates.getInstanceOf(template));
+        }
+
+        if (templates == null) templates = new STGroupFile("resources/defs.stg");
         return new Template(templates.getInstanceOf(template));
     }
 

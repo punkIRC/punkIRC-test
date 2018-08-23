@@ -1,0 +1,5 @@
+NO_EXECUTABLE() ::= "ERROR: Missing executable path (-exec=\<PATH>)"
+HELP() ::= "WIP"
+UNABLE_TO_STOP_SERVER() ::= "ERROR: Server could not stopped!"
+UNABLE_TO_CREATE_RESULT_DIR() ::= "ERROR: Unable to create the results directory!"
+UNABLE_TO_CREATE_TEST_DIR() ::= "ERROR: Unable to create the test directory!"

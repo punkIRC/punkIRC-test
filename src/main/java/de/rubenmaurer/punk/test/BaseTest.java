@@ -16,16 +16,18 @@ public abstract class BaseTest {
 
     @AfterAll
     static void afterAll() {
-
+        Session.terminate();
     }
 
     @BeforeEach
     void before() {
-        if(Session.isInitiated()) Session.startServer();
+        Session.startServer();
     }
 
     @AfterEach
-    void after() {
-        if(Session.isInitiated()) Session.stopServer();
+    void after() throws Exception {
+        if (!Session.stopServer()) {
+            throw new Exception("MÖÖÖP!");
+        }
     }
 }
