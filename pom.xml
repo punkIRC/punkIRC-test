@@ -59,28 +59,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>copy-config</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/pricefield/resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
@@ -94,6 +72,7 @@
                             <target>
                                 <echo>Copy config.properties</echo>
                                 <copy file="src/main/resources/config.properties" tofile="${basedir}/target/pricefield/config.properties"/>
+                                <copy file=".chirc/chirc" tofile="${basedir}/target/pricefield/chirc"/>
                             </target>
                         </configuration>
                     </execution>
@@ -143,7 +122,6 @@
                     <format>{0,number}</format>
                     <items>
                         <item>buildNumber</item>
-                        <item>scmVersion</item>
                     </items>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>

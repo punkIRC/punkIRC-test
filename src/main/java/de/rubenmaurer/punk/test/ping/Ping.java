@@ -23,7 +23,7 @@ public class Ping extends BaseTest {
     }
 
     @Test
-    void testMultiping() throws Exception {
+    void testMultiPing() throws Exception {
         Client c1 = Client.create(ClientPreset.SCHROTTY);
         Client c2 = Client.create(ClientPreset.MAX);
 

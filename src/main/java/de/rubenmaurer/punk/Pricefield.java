@@ -3,7 +3,6 @@ package de.rubenmaurer.punk;
 import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.core.util.Terminal;
 import de.rubenmaurer.punk.messages.Template;
-import org.apache.commons.lang3.StringUtils;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.File;
@@ -62,13 +61,12 @@ public class Pricefield {
         // Erase screen
         System.out.println(ansi()
                 .render(Terminal.getDivider())
-                .render(Terminal.center(String.format("Project Pricefield | [Version]: %s [Build]: %s", Settings.version(), Settings.build())))
+                .render(Terminal.center(String.format("Project Pricefield | [Version]: %s | [Build]: %s", Settings.version(), Settings.build())))
                 .render(Terminal.getDivider())
                 .render(Terminal.center(String.format("ID: %s", generateID())))
                 .render(Terminal.getDivider()));
 
         checkDirectoriesAndPipe();
-        System.err.println("Hello there!");
 
         //Launch the tests
         TestLauncher.launch();
@@ -85,11 +83,18 @@ public class Pricefield {
     private static void checkDirectoriesAndPipe() {
         try {
             File resultDir = new File(Settings.resultPath);
-            File testDir = new File(String.format("%s/%s", Settings.resultPath, Pricefield.ID));
+            File logDir = new File(Settings.logPath);
+            File testDir = new File(String.format("%s/%s", Settings.logPath, Pricefield.ID));
 
             if (!resultDir.exists()) {
                 if (!resultDir.mkdir()) {
                     throw new IOException(Template.get("UNABLE_TO_CREATE_RESULT_DIR").render());
+                }
+            }
+
+            if (!logDir.exists()) {
+                if (!logDir.mkdir()) {
+                    throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
                 }
             }
 
@@ -100,7 +105,7 @@ public class Pricefield {
             }
 
             System.setErr(new PrintStream(new FileOutputStream(
-                    new File(String.format("%s/%s/pricefield.log", Settings.resultPath, Pricefield.ID)))));
+                    new File(String.format("%s/%s/pricefield.log", Settings.logPath, Pricefield.ID)))));
 
         } catch(IOException e) {
             System.err.println(e.getMessage());

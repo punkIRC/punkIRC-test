@@ -40,22 +40,24 @@ public class Terminal {
     }
 
     public static String twoSidedColumn(String col1, String col2) {
-        int space = LINE_LENGTH - (col1.length() + col2.length()) + 10;
+        return twoSidedColumn(col1, col2, 10, false);
+    }
+
+    public static String twoSidedColumn(String col1, String col2, boolean newLine) {
+        return twoSidedColumn(col1, col2, 10, newLine);
+    }
+
+    public static String twoSidedColumn(String col1, String col2, int comp, boolean newLine) {
+        int space = LINE_LENGTH - (col1.length() + col2.length()) + comp;
+
+        if (newLine) {
+            return String.format("%s%s%s\r\n", col1, StringUtils.repeat(" ", space), col2);
+        }
 
         return String.format("%s%s%s", col1, StringUtils.repeat(" ", space), col2);
     }
 
     public static String cageStatus(String status) {
         return String.format("[%s]", center(status, CAGE_SIZE, false));
-    }
-
-    private static String upperCaseWordsOnly(String input) {
-        StringBuilder sb = new StringBuilder();
-
-        for (char c : input.toCharArray()) {
-            if (Character.isUpperCase(c)) sb.append(c);
-        }
-
-        return sb.toString();
     }
 }

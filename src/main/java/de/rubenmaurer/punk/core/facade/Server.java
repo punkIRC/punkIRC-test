@@ -2,11 +2,9 @@ package de.rubenmaurer.punk.core.facade;
 
 import de.rubenmaurer.punk.Pricefield;
 import de.rubenmaurer.punk.core.util.Settings;
-import de.rubenmaurer.punk.messages.Template;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Class for representing an irc server.
@@ -61,10 +59,10 @@ public class Server {
                 }
 
                 pb.redirectOutput(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_log.log", Settings.resultPath, Pricefield.ID))));
+                        new File(String.format("%s/%s/server_log.log", Settings.logPath, Pricefield.ID))));
 
                 pb.redirectError(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_error.log", Settings.resultPath, Pricefield.ID))));
+                        new File(String.format("%s/%s/server_error.log", Settings.logPath, Pricefield.ID))));
 
                 self.server = pb.start();
                 Thread.sleep(Settings.defaultServerStartDelay * 1000);
@@ -97,10 +95,10 @@ public class Server {
                         continue;
                     }
 
-                    self.server.destroyForcibly();
+                    self.server = self.server.destroyForcibly();
                 }
 
-                return self.server.isAlive();
+                return !self.server.isAlive();
             } catch(InterruptedException e) {
                 System.err.println(e.getMessage());
                 System.exit(-1);

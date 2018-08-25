@@ -21,6 +21,7 @@ public class Settings {
     public static int defaultServerShutdownTries = 5;
     public static int defaultExpectedLineCount = 1;
     public static String defaultResponseDelimiter = "\r\n";
+    public static String logPath = "logs";
     public static String resultPath = "results";
 
     public static String executable = "";

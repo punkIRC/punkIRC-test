@@ -12,6 +12,8 @@ public class PricefieldUnitListener implements TestExecutionListener {
 
     private String display;
 
+    private int testCount, success, failed, aborted;
+
     public void executionStarted(TestIdentifier testIdentifier) {
         display = testIdentifier.getDisplayName();
 
@@ -21,13 +23,17 @@ public class PricefieldUnitListener implements TestExecutionListener {
                 System.out.println(ansi().saveCursorPosition()
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(status))))));
 
+                testCount++;
                 return;
             }
 
             System.out.print(ansi()
-                    .render(Terminal.getDivider("-"))
-                    .render(Terminal.center(display))
+                    .render("\r\n")
+                    .render(Terminal.getDivider("="))
+                    .render(Terminal.center(String.format("=== %s ===", display.toUpperCase())))
                     .render(Terminal.getDivider("-")));
+
+            testCount = success = failed = aborted = 0;
         }
     }
 
@@ -39,14 +45,38 @@ public class PricefieldUnitListener implements TestExecutionListener {
     }
 
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        TestExecutionResult.Status status = testExecutionResult.getStatus();
+        if (!testIdentifier.getDisplayName().contains("JUnit")) {
+            if (!testIdentifier.isContainer()) {
+                TestExecutionResult.Status status = testExecutionResult.getStatus();
 
-        String result = ansi().fgGreen().render(status.name()).fgDefault().toString();
-        if (status.equals(TestExecutionResult.Status.FAILED) || status.equals(TestExecutionResult.Status.ABORTED)) {
-            result = ansi().fgRed().render(status.name()).fgDefault().toString();
+                String result = "";
+                if (status.equals(TestExecutionResult.Status.FAILED) || status.equals(TestExecutionResult.Status.ABORTED)) {
+                    result = ansi().fgRed().render(status.name()).fgDefault().toString();
+                    if (status.equals(TestExecutionResult.Status.ABORTED)) {
+                        aborted++;
+                    }
+
+                    if (status.equals(TestExecutionResult.Status.FAILED)) {
+                        failed++;
+                    }
+                }
+
+                if (status.equals(TestExecutionResult.Status.SUCCESSFUL)) {
+                    result = ansi().fgGreen().render(status.name()).fgDefault().toString();
+                    success++;
+                }
+
+                System.out.println(ansi().restoreCursorPosition().eraseLine(Ansi.Erase.ALL)
+                        .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(result))))));
+
+                return;
+            }
+
+            System.out.println(ansi()
+                    .render(Terminal.getDivider("-"))
+                    .render(Terminal.center(String.format("[TESTS]: %s [SUCCESS]: %s [ABORTED]: %s [FAILURES]: %s", testCount, success, aborted, failed)))
+                    .render(Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (success / testCount) * 100)))
+                    .render(Terminal.getDivider("=")));
         }
-
-        System.out.println(ansi().restoreCursorPosition().eraseLine(Ansi.Erase.ALL)
-                .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(result))))));
     }
 }

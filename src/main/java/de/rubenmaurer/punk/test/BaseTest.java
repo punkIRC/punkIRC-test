@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 public abstract class BaseTest {
 
     @BeforeAll
@@ -16,18 +18,16 @@ public abstract class BaseTest {
 
     @AfterAll
     static void afterAll() {
-        Session.terminate();
+        assumeTrue(Session.terminate());
     }
 
     @BeforeEach
     void before() {
-        Session.startServer();
+        assumeTrue(Session.startServer());
     }
 
     @AfterEach
-    void after() throws Exception {
-        if (!Session.stopServer()) {
-            throw new Exception("MÖÖÖP!");
-        }
+    void after() {
+        assumeTrue(Session.stopServer());
     }
 }
