@@ -15,7 +15,7 @@ class TestLauncher {
     static void launch() {
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
-                        //selectClass(BasicConnection.class),
+                        selectClass(BasicConnection.class),
                         selectClass(Ping.class),
                         selectClass(Pong.class)).build();
 

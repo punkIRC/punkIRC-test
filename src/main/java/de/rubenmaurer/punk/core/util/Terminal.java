@@ -1,6 +1,10 @@
 package de.rubenmaurer.punk.core.util;
 
+import de.rubenmaurer.punk.messages.Template;
 import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Terminal {
 
@@ -59,5 +63,19 @@ public class Terminal {
 
     public static String cageStatus(String status) {
         return String.format("[%s]", center(status, CAGE_SIZE, false));
+    }
+
+    public static void printError(String message) {
+        printError(message, "pricefield");
+    }
+
+    public static void printError(String message, String source) {
+        if (message != null && !message.isEmpty()) {
+            System.err.print(String.format("%s\r\n\r\n",
+                    Template.get("LOG_ERROR")
+                            .single("timestamp", new SimpleDateFormat("hh:mm:ss").format(new Date()))
+                            .single("message", message)
+                            .single("place", source).render()));
+        }
     }
 }

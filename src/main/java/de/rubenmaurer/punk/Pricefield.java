@@ -19,43 +19,28 @@ public class Pricefield {
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
 
-        if (args == null || args.length == 0) {
-            System.err.print(Template.get("HELP").render());
-            System.exit(-1);
-        }
-
         for (String arg : args) {
             String[] argument = arg.split("=");
 
             // Set the executable path for the server
             if (argument[0].equals("-exec")) {
-                Settings.executable = String.format("%s", argument[1]);
+                Settings.storeOverride("executable", String.format("%s", argument[1]));
             }
 
             // Set the server port
             if (argument[0].equals("-p")) {
-                Settings.port = Integer.parseInt(argument[1]);
+                Settings.storeOverride("port", argument[1]);
             }
 
             // Set the server hostname
             if (argument[0].equals("-h")) {
-                Settings.hostname = argument[1];
-            }
-
-            // Enable silent mode
-            if (argument[0].equals("-s")) {
-                Settings.silent = true;
+                Settings.storeOverride("hostname", argument[1]);
             }
 
             // Deactivate java mode
             if (argument[0].equals("-d")) {
-                Settings.javaMode = false;
+                Settings.storeOverride("java", "false");
             }
-        }
-
-        if (Settings.executable.isEmpty()) {
-            System.err.println(Template.get("NO_EXECUTABLE").render());
-            System.exit(-1);
         }
 
         // Erase screen
@@ -82,9 +67,9 @@ public class Pricefield {
 
     private static void checkDirectoriesAndPipe() {
         try {
-            File resultDir = new File(Settings.resultPath);
-            File logDir = new File(Settings.logPath);
-            File testDir = new File(String.format("%s/%s", Settings.logPath, Pricefield.ID));
+            File resultDir = new File(Settings.results());
+            File logDir = new File(Settings.logs());
+            File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.ID));
 
             if (!resultDir.exists()) {
                 if (!resultDir.mkdir()) {
@@ -105,10 +90,12 @@ public class Pricefield {
             }
 
             System.setErr(new PrintStream(new FileOutputStream(
-                    new File(String.format("%s/%s/pricefield.log", Settings.logPath, Pricefield.ID)))));
+                    new File(String.format("%s/%s/pricefield.log", Settings.logs(), Pricefield.ID)))));
 
         } catch(IOException e) {
-            System.err.println(e.getMessage());
+            Terminal.printError(e.getMessage());
+
+            System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
             System.exit(-1);
         }
     }

@@ -41,7 +41,6 @@ public class Template {
      * @return the loaded template
      */
     public static Template get(String template) {
-
         if (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug")) {
             if (templates == null) templates = new STGroupFile("defs.stg");
             return new Template(templates.getInstanceOf(template));

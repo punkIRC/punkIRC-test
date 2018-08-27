@@ -2,6 +2,8 @@ package de.rubenmaurer.punk.core.facade;
 
 import de.rubenmaurer.punk.Pricefield;
 import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.core.util.Terminal;
+import de.rubenmaurer.punk.messages.Template;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +19,6 @@ public class Server {
      * Server executable path.
      */
     private String path;
-
-    private String[] args;
 
     /**
      * The Server process.
@@ -54,22 +54,24 @@ public class Server {
             try {
                 ProcessBuilder pb = new ProcessBuilder("java", "-jar", self.path);
 
-                if (!Settings.javaMode) {
+                if (!Settings.java()) {
                     pb = new ProcessBuilder(self.path);
                 }
 
                 pb.redirectOutput(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_log.log", Settings.logPath, Pricefield.ID))));
+                        new File(String.format("%s/%s/server_log.log", Settings.logs(), Pricefield.ID))));
 
                 pb.redirectError(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_error.log", Settings.logPath, Pricefield.ID))));
+                        new File(String.format("%s/%s/server_error.log", Settings.logs(), Pricefield.ID))));
 
                 self.server = pb.start();
-                Thread.sleep(Settings.defaultServerStartDelay * 1000);
+                Thread.sleep(Settings.startDelay() * 1000);
 
                 return self.server.isAlive();
             } catch (IOException | InterruptedException e) {
-                System.err.println(e.getMessage());
+                Terminal.printError(e.getMessage());
+                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+
                 System.exit(-1);
             }
         }
@@ -88,9 +90,9 @@ public class Server {
                 self.server.destroy();
 
                 while (self.server.isAlive()) {
-                    Thread.sleep(Settings.defaultServerStopDelay * 1000);
+                    Thread.sleep(Settings.stopDelay() * 1000);
 
-                    if (self.shutdownTries < Settings.defaultServerShutdownTries) {
+                    if (self.shutdownTries < Settings.shutdownTries()) {
                         self.server.destroy();
                         continue;
                     }
@@ -100,7 +102,9 @@ public class Server {
 
                 return !self.server.isAlive();
             } catch(InterruptedException e) {
-                System.err.println(e.getMessage());
+                Terminal.printError(e.getMessage());
+                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+
                 System.exit(-1);
             }
         }

@@ -4,3 +4,6 @@ UNABLE_TO_STOP_SERVER() ::= "ERROR: Server could not stopped!"
 UNABLE_TO_CREATE_RESULT_DIR() ::= "ERROR: Unable to create the results directory!"
 UNABLE_TO_CREATE_LOG_DIR() ::= "ERROR: Unable to create the logs directory!"
 UNABLE_TO_CREATE_TEST_DIR() ::= "ERROR: Unable to create the test directory!"
+
+LOG_ERROR(timestamp, message, place) ::= "[<place>@<timestamp>]: <message>"
+TERMINATE_MESSAGE(id) ::= "See 'logs/<id>/pricefield.log' for detailed information."

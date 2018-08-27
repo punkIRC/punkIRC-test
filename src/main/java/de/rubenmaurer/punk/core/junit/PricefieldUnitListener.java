@@ -17,7 +17,7 @@ public class PricefieldUnitListener implements TestExecutionListener {
     public void executionStarted(TestIdentifier testIdentifier) {
         display = testIdentifier.getDisplayName();
 
-        String status = ansi().fgBlue().render("PROCEESING").fgDefault().toString();
+        String status = ansi().fgBlue().render("PROCESSING").fgDefault().toString();
         if(!display.contains("JUnit")) {
             if (!testIdentifier.isContainer()) {
                 System.out.println(ansi().saveCursorPosition()
@@ -75,7 +75,7 @@ public class PricefieldUnitListener implements TestExecutionListener {
             System.out.println(ansi()
                     .render(Terminal.getDivider("-"))
                     .render(Terminal.center(String.format("[TESTS]: %s [SUCCESS]: %s [ABORTED]: %s [FAILURES]: %s", testCount, success, aborted, failed)))
-                    .render(Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (success / testCount) * 100)))
+                    .render(Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (int)((success * 1.0 / testCount * 1.0) * 100))))
                     .render(Terminal.getDivider("=")));
         }
     }

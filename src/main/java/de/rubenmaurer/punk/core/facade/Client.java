@@ -7,6 +7,7 @@ import akka.util.Timeout;
 import de.rubenmaurer.punk.core.util.Ask;
 import de.rubenmaurer.punk.core.util.ClientPreset;
 import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.core.util.Terminal;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
@@ -129,7 +130,7 @@ public class Client {
         this.realname = realname;
         this.hostname = hostname;
 
-        Timeout timeout = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
+        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
         this.connection = (ActorRef) Await.result(future, timeout.duration());
     }
@@ -141,12 +142,13 @@ public class Client {
      */
     public Boolean connect() {
         boolean connected = false;
-        Timeout timeout = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
+        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, "connect", timeout);
 
         try {
             connected = (Boolean) Await.result(future, timeout.duration());
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            Terminal.printError(e.getMessage());
         }
 
         return connected;
@@ -166,7 +168,7 @@ public class Client {
      * @throws Exception the exception
      */
     public boolean isConnected() throws Exception {
-        Timeout timeout = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
+        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, "connected", timeout);
 
         return (Boolean) Await.result(future, timeout.duration());
@@ -180,7 +182,7 @@ public class Client {
      * @throws Exception the exception
      */
     public String[] sendAndReceive(String message) throws Exception {
-        return sendAndReceive(message, Settings.defaultExpectedLineCount);
+        return sendAndReceive(message, Settings.expectedLines());
     }
 
     /**
@@ -196,20 +198,20 @@ public class Client {
         lastLines = new String[]{ "" };
 
         if (isConnected()) {
-            Timeout timeout = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
+            Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
             Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines), timeout);
 
             try {
                 lastResponse = (String) Await.result(future, timeout.duration());
-                lastLines = lastResponse.split(Settings.defaultResponseDelimiter);
+                lastLines = lastResponse.split(Settings.delimiter());
             } catch (Exception exception) {
-                Timeout t = new Timeout(Settings.defaultTimeout, TimeUnit.SECONDS);
+                Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
                 Future<Object> f = Patterns.ask(connection, "last", timeout);
 
                 lastResponse = (String) Await.result(f, t.duration());
-                lastLines = lastResponse.split(Settings.defaultResponseDelimiter);
+                lastLines = lastResponse.split(Settings.delimiter());
 
-                System.err.println(lastResponse);
+                Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
             }
 
             return lastLines;

@@ -5,6 +5,8 @@ import de.rubenmaurer.punk.Pricefield;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class Settings {
@@ -15,25 +17,11 @@ public class Settings {
 
     private static Settings self = new Settings();
 
-    public static int defaultTimeout = 3;
-    public static int defaultServerStartDelay = 5;
-    public static int defaultServerStopDelay = 2;
-    public static int defaultServerShutdownTries = 5;
-    public static int defaultExpectedLineCount = 1;
-    public static String defaultResponseDelimiter = "\r\n";
-    public static String logPath = "logs";
-    public static String resultPath = "results";
-
-    public static String executable = "";
-    public static String hostname = "localhost";
-    public static int port = 6667;
-
-    public static boolean silent = false;
-    public static boolean javaMode = true;
+    private static Map<String, String> overrides = new HashMap<>();
 
     private Settings() {
-        String props = "config.properties";
-        String inter = "build.properties";
+        String props = "resources/config.properties";
+        String inter = "resources/build.properties";
 
         File f = new File("./config.properties");
 
@@ -42,14 +30,22 @@ public class Settings {
         try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(props)) {
             properties.load(input);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            Terminal.printError(e.getMessage());
         }
 
         try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(inter)) {
             internal.load(input);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            Terminal.printError(e.getMessage());
         }
+    }
+
+    private static String loadOverride(String key) {
+        return overrides.getOrDefault(key, "none");
+    }
+
+    public static String storeOverride(String key, String value) {
+        return overrides.put(key, value);
     }
 
     public static String version() {
@@ -58,5 +54,82 @@ public class Settings {
 
     public static String build() {
         return self.internal.getProperty("buildNumber", "501");
+    }
+
+    public static String delimiter() {
+        return self.internal.getProperty("delimiter");
+    }
+
+    public static String logs() {
+        return self.internal.getProperty("logs");
+    }
+
+    public static String results() {
+        return self.internal.getProperty("results");
+    }
+
+    public static String executable() {
+        String ovr = loadOverride("executable");
+        if (!ovr.equals("none")) {
+            return ovr;
+        }
+
+        return self.properties.getProperty("executable");
+    }
+
+    public static String hostname() {
+        String ovr = loadOverride("hostname");
+        if (!ovr.equals("none")) {
+            return ovr;
+        }
+
+        return self.properties.getProperty("hostname");
+    }
+
+    public static boolean silent() {
+        String ovr = loadOverride("silent");
+        if (!ovr.equals("none")) {
+            return Boolean.valueOf(ovr);
+        }
+
+        return Boolean.valueOf(self.properties.getProperty("silent"));
+    }
+
+    public static boolean java() {
+        String ovr = loadOverride("java");
+        if (!ovr.equals("none")) {
+            return Boolean.valueOf(ovr);
+        }
+
+        return Boolean.valueOf(self.properties.getProperty("java"));
+    }
+
+    public static int port() {
+        String ovr = loadOverride("port");
+        if (!ovr.equals("none")) {
+            return Integer.parseInt(ovr);
+        }
+
+        return Integer.parseInt(self.properties.getProperty("port"));
+    }
+
+    public static int shutdownTries() {
+        return Integer.parseInt(self.internal.getProperty("shutdownTries"));
+    }
+
+    public static int expectedLines() {
+        return Integer.parseInt(self.internal.getProperty("expectedLines"));
+    }
+
+    public static int timeout() {
+        return Integer.parseInt(self.properties.getProperty("timeout"));
+    }
+
+    public static int startDelay() {
+        return Integer.parseInt(self.properties.getProperty("startDelay"));
+    }
+
+    public static int stopDelay() {
+        return Integer.parseInt(self.properties.getProperty("stopDelay"));
     }
 }
