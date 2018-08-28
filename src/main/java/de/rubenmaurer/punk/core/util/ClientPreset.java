@@ -1,10 +1,10 @@
 package de.rubenmaurer.punk.core.util;
 
 public enum ClientPreset {
-    SCHROTTY ("schrotty", "schrottler", "Rodolf Schrottler", "schrotty@schrottler.net"),
-    MAX ("max", "maxine", "Maxine Caulfield", "max@caulfield.net"),
-    CHLOE ("chloe", "elisabeth", "Chloe Elisabeth Price", "chloe@price.net"),
-    RACHEL ("rachel", "ramber", "Rachel Amber", "rachel@amber.net");
+    SCHROTTY ("schrotty", "schrottler", "Rodolf Schrottler"),
+    MAX ("max", "maxine", "Maxine Caulfield"),
+    CHLOE ("chloe", "elisabeth", "Chloe Elisabeth Price"),
+    RACHEL ("rachel", "ramber", "Rachel Amber");
 
     private String nickname;
 
@@ -24,16 +24,9 @@ public enum ClientPreset {
         return realname;
     }
 
-    private String hostname;
-
-    public String hostname() {
-        return hostname;
-    }
-
-    ClientPreset(String nickname, String username, String realname, String hostname) {
+    ClientPreset(String nickname, String username, String realname) {
         this.nickname = nickname;
         this.realname = realname;
         this.username = username;
-        this.hostname = hostname;
     }
 }

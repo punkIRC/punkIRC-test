@@ -86,13 +86,20 @@ public class Settings {
         return self.properties.getProperty("hostname");
     }
 
-    public static boolean silent() {
-        String ovr = loadOverride("silent");
-        if (!ovr.equals("none")) {
-            return Boolean.valueOf(ovr);
-        }
+    private static String parameter(int id) {
+        return self.properties.getProperty(String.format("parameter_%d", id));
+    }
 
-        return Boolean.valueOf(self.properties.getProperty("silent"));
+    public static String[] serverSetup(String server) {
+        return new String[] {
+                server, parameter(0), parameter(1), parameter(2)
+        };
+    }
+
+    public static String[] javaServerSetup(String server) {
+        return new String[] {
+          "java", "-jar", server, parameter(0), parameter(1), parameter(2)
+        };
     }
 
     public static boolean java() {

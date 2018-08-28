@@ -52,10 +52,10 @@ public class Server {
     static boolean start() {
         if (self != null) {
             try {
-                ProcessBuilder pb = new ProcessBuilder("java", "-jar", self.path);
+                ProcessBuilder pb = new ProcessBuilder(Settings.javaServerSetup(self.path));
 
                 if (!Settings.java()) {
-                    pb = new ProcessBuilder(self.path);
+                    pb = new ProcessBuilder(Settings.serverSetup(self.path));
                 }
 
                 pb.redirectOutput(ProcessBuilder.Redirect.appendTo(

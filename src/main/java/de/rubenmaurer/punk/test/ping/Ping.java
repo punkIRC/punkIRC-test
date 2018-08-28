@@ -3,6 +3,7 @@ package de.rubenmaurer.punk.test.ping;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
 import de.rubenmaurer.punk.core.util.ClientPreset;
+import de.rubenmaurer.punk.core.util.ClientUtils;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ public class Ping extends BaseTest {
         Client c = Client.create(ClientPreset.MAX);
 
         if (Session.serverIsAlive()) {
+            c.send(ClientUtils.user(c));
+            c.send(ClientUtils.nick(c));
+
             c.sendAndReceive("PING", 1);
         }
 

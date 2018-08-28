@@ -21,24 +21,25 @@ public class Pricefield {
 
         for (String arg : args) {
             String[] argument = arg.split("=");
+            String command = argument[0];
 
             // Set the executable path for the server
-            if (argument[0].equals("-exec")) {
+            if (command.equals("--executable") || command.equals("-e")) {
                 Settings.storeOverride("executable", String.format("%s", argument[1]));
             }
 
             // Set the server port
-            if (argument[0].equals("-p")) {
+            if (command.equals("--port") || command.equals("-p")) {
                 Settings.storeOverride("port", argument[1]);
             }
 
             // Set the server hostname
-            if (argument[0].equals("-h")) {
+            if (command.equals("--host") || command.equals("-h")) {
                 Settings.storeOverride("hostname", argument[1]);
             }
 
             // Deactivate java mode
-            if (argument[0].equals("-d")) {
+            if (command.equals("--java") || command.equals("-j")) {
                 Settings.storeOverride("java", "false");
             }
         }
@@ -69,7 +70,9 @@ public class Pricefield {
         try {
             File resultDir = new File(Settings.results());
             File logDir = new File(Settings.logs());
+
             File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.ID));
+            File resDir = new File(String.format("%s/%s", Settings.results(), Pricefield.ID));
 
             if (!resultDir.exists()) {
                 if (!resultDir.mkdir()) {
@@ -86,6 +89,12 @@ public class Pricefield {
             if (!testDir.exists()) {
                 if (!testDir.mkdir()) {
                     throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
+                }
+            }
+
+            if (!resDir.exists()) {
+                if (!resDir.mkdir()) {
+                    throw new IOException(Template.get("UNABLE_TO_CREATE_RESULT_DIR").render());
                 }
             }
 

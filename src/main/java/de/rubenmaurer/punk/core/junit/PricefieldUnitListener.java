@@ -1,10 +1,16 @@
 package de.rubenmaurer.punk.core.junit;
 
+import de.rubenmaurer.punk.Pricefield;
+import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.core.util.Terminal;
 import org.fusesource.jansi.Ansi;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -72,10 +78,25 @@ public class PricefieldUnitListener implements TestExecutionListener {
                 return;
             }
 
+            PrintStream out = System.out;
+            String summary = String.format("%s%s",
+                    Terminal.center(String.format("[TESTS]: %s [SUCCESS]: %s [ABORTED]: %s [FAILURES]: %s", testCount, success, aborted, failed)),
+                    Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (int)((success * 1.0 / testCount * 1.0) * 100))));
+
+            try {
+                System.setOut(new PrintStream(new FileOutputStream(
+                        new File(String.format("%s/%s/result.log", Settings.results(), Pricefield.ID)))));
+
+                System.out.println(summary);
+            } catch(Exception e) {
+                Terminal.printError(Terminal.center(e.getMessage()));
+            } finally {
+                System.setOut(out);
+            }
+
             System.out.println(ansi()
                     .render(Terminal.getDivider("-"))
-                    .render(Terminal.center(String.format("[TESTS]: %s [SUCCESS]: %s [ABORTED]: %s [FAILURES]: %s", testCount, success, aborted, failed)))
-                    .render(Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (int)((success * 1.0 / testCount * 1.0) * 100))))
+                    .render(summary)
                     .render(Terminal.getDivider("=")));
         }
     }

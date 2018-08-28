@@ -121,14 +121,12 @@ public class Client {
      * @param nickname the nickname
      * @param username the username
      * @param realname the realname
-     * @param hostname the hostname
      * @throws Exception the exception
      */
-    private Client(String nickname, String username, String realname, String hostname) throws Exception {
+    private Client(String nickname, String username, String realname) throws Exception {
         this.nickname = nickname;
         this.username = username;
         this.realname = realname;
-        this.hostname = hostname;
 
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
@@ -269,12 +267,11 @@ public class Client {
      * @param nickname the nickname
      * @param username the username
      * @param realname the realname
-     * @param hostname the hostname
      * @return the client
      * @throws Exception the exception
      */
-    public static Client create(String nickname, String username, String realname, String hostname) throws Exception {
-        return new Client(nickname, username, realname, hostname);
+    public static Client create(String nickname, String username, String realname) throws Exception {
+        return new Client(nickname, username, realname);
     }
 
     /**
@@ -285,6 +282,6 @@ public class Client {
      * @throws Exception the exception
      */
     public static Client create(ClientPreset preset) throws Exception {
-        return new Client(preset.nickname(), preset.username(), preset.realname(), preset.hostname());
+        return new Client(preset.nickname(), preset.username(), preset.realname());
     }
 }
