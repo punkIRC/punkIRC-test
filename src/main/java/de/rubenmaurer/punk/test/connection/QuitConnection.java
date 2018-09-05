@@ -1,73 +1,73 @@
 package de.rubenmaurer.punk.test.connection;
 
 import de.rubenmaurer.punk.core.facade.Client;
+import de.rubenmaurer.punk.core.facade.Client.Preset;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientPreset;
 import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class QuitConnection extends BaseTest {
+public class QuitConnection extends BaseTest {
 
     @Test
     void quitAfterRegistration1() throws Exception {
-        Client c = Client.create(ClientPreset.SCHROTTY);
+        Client c = Client.create(Preset.SCHROTTY);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceive(ClientUtils.auth(c), 4);
+            c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
             c.sendAndReceive(ClientUtils.quit("Goodbye!"), 1);
         }
 
-        assertTrue(Evaluation.replyQuit(c));
+        Evaluation.quit(c);
     }
 
     @Test
     void quitAfterRegistration2() throws Exception {
-        Client c = Client.create(ClientPreset.SCHROTTY);
+        Client c = Client.create(Preset.SCHROTTY);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceive(ClientUtils.auth(c), 4);
+            c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
             c.sendAndReceive(ClientUtils.quit("Goodbye!"), 1);
         }
 
-        assertTrue(Evaluation.replyQuit(c));
+        Evaluation.quit(c);
         assertFalse(c.isConnected());
     }
 
     @Test
     void quitAfterRegistration3() throws Exception {
-        Client c = Client.create(ClientPreset.SCHROTTY);
+        Client c = Client.create(Preset.SCHROTTY);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceive(ClientUtils.auth(c), 4);
+            c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
             c.sendAndReceive("QUIT", 1);
         }
 
-        assertTrue(Evaluation.replyQuit(c));
+        Evaluation.quit(c);
         assertFalse(c.isConnected());
     }
 
     @Test
     void quitAfterRegistration4() throws Exception {
-        Client c1 = Client.create(ClientPreset.MAX);
-        Client c2 = Client.create(ClientPreset.CHLOE);
+        Client c1 = Client.create(Preset.MAX);
+        Client c2 = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            c1.sendAndReceive(ClientUtils.auth(c1), 4);
-            c2.sendAndReceive(ClientUtils.auth(c2), 4);
+            c1.sendAndReceiveAll(ClientUtils.auth(c1), Settings.authLines());
+            c2.sendAndReceiveAll(ClientUtils.auth(c2), Settings.authLines());
 
             c1.sendAndReceive(ClientUtils.quit("Goodbye!"), 1);
             c2.sendAndReceive(ClientUtils.quit("See ya!"), 1);
         }
 
-        assertTrue(Evaluation.replyQuit(c1));
+        Evaluation.quit(c1);
         assertFalse(c1.isConnected());
 
-        assertTrue(Evaluation.replyQuit(c2));
+        Evaluation.quit(c2);
         assertFalse(c2.isConnected());
     }
 }

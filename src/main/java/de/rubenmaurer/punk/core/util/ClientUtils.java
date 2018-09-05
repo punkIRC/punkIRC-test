@@ -17,28 +17,23 @@ public class ClientUtils {
                 .single("realname", client.realname()).render();
     }
 
-    public static String auth(Client client) {
-        return String.format("%s%s", nick(client), user(client));
-    }
+    public static List<String> auth(Client client) {
+        List<String> lst = new ArrayList<>();
+        lst.add(user(client));
+        lst.add(nick(client));
 
-    public static List<String> authPartitioned(Client client, int splits, int splitLength) {
-        String auth = auth(client);
-        List<String> messages = new ArrayList<>();
-
-        for (int i = 0; i < splits; i++) {
-            if (splitLength <= auth.length()) {
-                messages.add(auth.substring(0, splitLength));
-                auth = auth.substring(splitLength);
-            }
-        }
-
-        if (auth.length() != 0) messages.add(auth);
-        return messages;
+        return lst;
     }
 
     public static String privateMessage(Client target, String message) {
         return Template.get("privmsg")
                 .single("nickname", target.nickname())
+                .single("message", message).render();
+    }
+
+    public static String privateMessage(String channel, String message) {
+        return Template.get("privmsgchannel")
+                .single("channel", channel)
                 .single("message", message).render();
     }
 
@@ -50,5 +45,13 @@ public class ClientUtils {
 
     public static String quit(String message) {
         return Template.get("quit").single("message", message).render();
+    }
+
+    public static String joinChannel(String channel) {
+        return Template.get("join").single("channel", channel).render();
+    }
+
+    public static String whoIs(String user) {
+        return Template.get("whois").single("nickname", user).render();
     }
 }

@@ -63,6 +63,23 @@ public class Template {
     }
 
     /**
+     * Fill a single var in loaded template.
+     *
+     * @param key the key
+     * @param values the values
+     * @return the rendered template
+     */
+    public Template single(String key, String[] values) {
+        StringBuilder sb = new StringBuilder();
+        for (String value : values) {
+            sb.append(String.format("%s;", value));
+        }
+
+        template.add(key, sb.toString());
+        return this;
+    }
+
+    /**
      * Render a template without replaced vars.
      *
      * @return the rendered template

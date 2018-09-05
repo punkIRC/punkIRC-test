@@ -4,13 +4,14 @@ import akka.actor.ActorRef;
 import akka.actor.PoisonPill;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-import de.rubenmaurer.punk.core.util.Ask;
-import de.rubenmaurer.punk.core.util.ClientPreset;
-import de.rubenmaurer.punk.core.util.Settings;
-import de.rubenmaurer.punk.core.util.Terminal;
+import de.rubenmaurer.punk.core.util.*;
+import de.rubenmaurer.punk.evaluation.Response;
+import de.rubenmaurer.punk.messages.Template;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -64,20 +65,6 @@ public class Client {
     }
 
     /**
-     * The Hostname.
-     */
-    private String hostname;
-
-    /**
-     * Hostname string.
-     *
-     * @return the string
-     */
-    public String hostname() {
-        return hostname;
-    }
-
-    /**
      * The Last lines.
      */
     private String[] lastLines = new String[] {""};
@@ -102,7 +89,8 @@ public class Client {
      * @return the string
      */
     public String lastResponse() {
-        return lastResponse;
+        String[] splitted = lastResponse.split("\r\n");
+        return splitted[splitted.length - 1];
     }
 
     /**
@@ -152,6 +140,78 @@ public class Client {
         return connected;
     }
 
+    public Boolean connectAndIdle() {
+        boolean isConnected = connect();
+
+        try {
+            idle(1);
+        } catch (Exception e) {
+            Log.debug(e.getMessage());
+        }
+
+        return isConnected;
+    }
+
+    public void authenticate() throws Exception {
+        this.sendAndReceiveAll(ClientUtils.auth(this), Settings.authLines());
+    }
+
+    public void authenticateAndJoin(String channel) throws Exception {
+        authenticate();
+
+        sendAndReceive(ClientUtils.joinChannel(channel));
+    }
+
+    public LinkedList<String> log(int code) {
+        String result = null;
+        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+        Future<Object> future = Patterns.ask(connection, code, timeout);
+
+        try {
+            result = (String) Await.result(future, timeout.duration());
+        } catch (Exception e) {
+            Log.debug(e.getMessage());
+        }
+
+        if (result != null) {
+            return new LinkedList<>(Arrays.asList(result.split(";")));
+        }
+
+        return new LinkedList<>();
+    }
+
+    private LinkedList<String> journal() {
+        String result = null;
+        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+        Future<Object> future = Patterns.ask(connection, "journal", timeout);
+
+        try {
+            result = (String) Await.result(future, timeout.duration());
+        } catch (Exception e) {
+            Log.debug(e.getMessage());
+        }
+
+        if (result != null) {
+            return new LinkedList<>(Arrays.asList(result.split(";")));
+        }
+
+        return new LinkedList<>();
+    }
+
+    public LinkedList<String> getJournalEntries(String part) {
+        LinkedList<String> result = new LinkedList<>();
+
+        journal().forEach(s -> {
+            if (s.contains(part)) result.add(s);
+        });
+
+        return result;
+    }
+
+    public LinkedList<String> log(Response response) {
+        return log(response.value);
+    }
+
     /**
      * Disconnect the client from the server.
      */
@@ -163,13 +223,22 @@ public class Client {
      * Is client connected with the server?
      *
      * @return is connected?
-     * @throws Exception the exception
      */
-    public boolean isConnected() throws Exception {
+    public boolean isConnected() {
+        boolean result = false;
+
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, "connected", timeout);
 
-        return (Boolean) Await.result(future, timeout.duration());
+        try {
+            result = (Boolean) Await.result(future, timeout.duration());
+        } catch (Exception e) {
+            if (Settings.debug()) {
+                System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -192,30 +261,71 @@ public class Client {
      * @throws Exception the exception
      */
     public String[] sendAndReceive(String message, int expectedLines) throws Exception {
+        return sendAndReceive(message, expectedLines, true);
+    }
+
+    /**
+     * Send a message and receives an answer.
+     *
+     * @param message       the message
+     * @param expectedLines the expected lines
+     * @return the response
+     * @throws Exception the exception
+     */
+    public String[] sendAndReceive(String message, int expectedLines, int maxLines) throws Exception {
+        return sendAndReceive(message, expectedLines, maxLines, true);
+    }
+
+    /**
+     * Send a message and receives an answer.
+     *
+     * @param message       the message
+     * @param expectedLines the expected lines
+     * @return the response
+     * @throws Exception the exception
+     */
+    public String[] sendAndReceive(String message, int expectedLines, boolean sendLast) throws Exception {
+        return sendAndReceive(message, expectedLines, expectedLines, sendLast);
+    }
+
+    /**
+     * Send a message and receives an answer.
+     *
+     * @param message       the message
+     * @param expectedLines the expected lines
+     * @return the response
+     * @throws Exception the exception
+     */
+    public String[] sendAndReceive(String message, int expectedLines, int maxLines, boolean sendLast) throws Exception {
         if (!isConnected()) connect();
         lastLines = new String[]{ "" };
 
         if (isConnected()) {
             Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-            Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines), timeout);
+            Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines, maxLines), timeout);
 
             try {
                 lastResponse = (String) Await.result(future, timeout.duration());
                 lastLines = lastResponse.split(Settings.delimiter());
+
+                Log.debug(lastResponse);
             } catch (Exception exception) {
-                Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-                Future<Object> f = Patterns.ask(connection, "last", timeout);
+                if (sendLast && expectedLines > 0) {
+                    Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+                    Future<Object> f = Patterns.ask(connection, "last", timeout);
 
-                lastResponse = (String) Await.result(f, t.duration());
-                lastLines = lastResponse.split(Settings.delimiter());
+                    lastResponse = (String) Await.result(f, t.duration());
+                    lastLines = lastResponse.split(Settings.delimiter());
 
-                Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
+                    Log.debug(exception.getMessage());
+                    Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
+                }
             }
 
             return lastLines;
         }
 
-        throw new Exception("Client not connected");
+        throw new RuntimeException("Client not connected");
     }
 
     /**
@@ -227,12 +337,24 @@ public class Client {
      * @throws Exception the exception
      */
     public String[] sendAndReceiveAll(List<String> messages, int expectedLines) throws Exception {
+        return sendAndReceiveAll(messages, expectedLines, expectedLines);
+    }
+
+    /**
+     * Send a list of messages and receives an answer.
+     *
+     * @param messages      the messages
+     * @param expectedLines the expected lines
+     * @return the response
+     * @throws Exception the exception
+     */
+    public String[] sendAndReceiveAll(List<String> messages, int expectedLines, int maxLines) throws Exception {
         int index = 1;
         int lineCount = 0;
 
         for (String messsage : messages) {
             if (index == messages.size()) lineCount = expectedLines;
-            sendAndReceive(messsage, lineCount);
+            sendAndReceive(messsage, lineCount, maxLines);
             index++;
         }
 
@@ -261,6 +383,40 @@ public class Client {
         }
     }
 
+    public String last() {
+        Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+        Future<Object> f = Patterns.ask(connection, "last", t);
+
+        try {
+            return (String) Await.result(f, t.duration());
+        } catch (Exception e) {
+            if (Settings.debug()) {
+                System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
+            }
+        }
+
+        return "";
+    }
+
+    public String trash() {
+        Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+        Future<Object> f = Patterns.ask(connection, "trash", t);
+
+        try {
+            return ((String) Await.result(f, t.duration())).split("\r\n")[0];
+        } catch (Exception e) {
+            if (Settings.debug()) {
+                System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
+            }
+        }
+
+        return "";
+    }
+
+    private void idle(int time) throws Exception {
+        Thread.sleep(time * 1000);
+    }
+
     /**
      * Create a new client.
      *
@@ -281,7 +437,45 @@ public class Client {
      * @return the client
      * @throws Exception the exception
      */
-    public static Client create(ClientPreset preset) throws Exception {
+    public static Client create(Preset preset) throws Exception {
         return new Client(preset.nickname(), preset.username(), preset.realname());
+    }
+
+    public enum Preset {
+        SCHROTTY ("schrotty", "schrottler", "Rodolf Schrottler"),
+        MAX ("max", "maxine", "Maxine Caulfield"),
+        CHLOE ("chloe", "elisabeth", "Chloe Elisabeth Price"),
+        RACHEL ("rachel", "ramber", "Rachel Amber"),
+        WARREN ("warren", "apemaster", "Warren Graham"),
+        SAMUEL("samuel", "sammy", "Samuel Taylor"),
+        VICTORIA ("victoria", "richkid", "Victoria Chase"),
+        DAVID ("david", "soldier16", "David Madsen"),
+        MARK ("mark", "creeperDude", "Mark Jefferson"),
+        JOYCE ("joyce", "queenofkings", "Joyce Price"),
+        KATE ("kate", "bunnymommy", "Kate Marsh");
+
+        private String nickname;
+
+        public String nickname() {
+            return nickname;
+        }
+
+        private String username;
+
+        public String username() {
+            return username;
+        }
+
+        private String realname;
+
+        public String realname() {
+            return realname;
+        }
+
+        Preset(String nickname, String username, String realname) {
+            this.nickname = nickname;
+            this.realname = realname;
+            this.username = username;
+        }
     }
 }

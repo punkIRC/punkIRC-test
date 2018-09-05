@@ -1,12 +1,15 @@
-package de.rubenmaurer.punk.evaluation;
+package de.rubenmaurer.punk.evaluation.antlr;
 
-import de.rubenmaurer.punk.GrammarLexer;
-import de.rubenmaurer.punk.GrammarListener;
-import de.rubenmaurer.punk.GrammarParser;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import de.rubenmaurer.punk.IRCLexer;
+import de.rubenmaurer.punk.IRCParser;
+import de.rubenmaurer.punk.core.facade.Client;
+import de.rubenmaurer.punk.core.util.Log;
+import de.rubenmaurer.punk.evaluation.Response;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Parser {
 
@@ -15,18 +18,34 @@ public class Parser {
      *
      * @param message the message to parse
      */
-    public static void process(String message) {
+    public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
+        Log.debug(message);
+
         CharStream stream = CharStreams.fromString(message);
 
-        GrammarLexer lexer = new GrammarLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        GrammarParser parser = new GrammarParser(tokens);
+        IRCLexer lexer = new IRCLexer(stream);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-        GrammarParser.ResponseContext context = parser.response();
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        IRCParser parser = new IRCParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(PricefieldErrorListener.INSTANCE);
 
         ParseTreeWalker walker = new ParseTreeWalker();
-        GrammarListener listener = new PricefieldGrammarListener();
+        walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), parser.response());
+    }
 
-        walker.walk(listener, context);
+    public static void parse(Client sender, Response response, String message) {
+        parse(sender, sender, response, message, new HashMap<>());
+    }
+
+    public static void parse(Client sender, Client target, Response response, String message) {
+        parse(sender, target, response, message, new HashMap<>());
+    }
+
+    public static void parse(Client sender, Response response, String message, HashMap<String, String> values) {
+        parse(sender, sender, response, message, values);
     }
 }

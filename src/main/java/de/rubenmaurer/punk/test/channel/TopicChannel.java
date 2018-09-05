@@ -3,7 +3,7 @@ package de.rubenmaurer.punk.test.channel;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
-class TopicChannel extends BaseTest {
+public class TopicChannel extends BaseTest {
 
     @Test
     void topic1() {

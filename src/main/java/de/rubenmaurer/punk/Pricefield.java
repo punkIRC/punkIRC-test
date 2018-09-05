@@ -1,5 +1,7 @@
 package de.rubenmaurer.punk;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.core.util.Terminal;
 import de.rubenmaurer.punk.messages.Template;
@@ -41,6 +43,16 @@ public class Pricefield {
             // Deactivate java mode
             if (command.equals("--java") || command.equals("-j")) {
                 Settings.storeOverride("java", "false");
+            }
+
+            // Select test classes
+            if (command.equals("--tests") || command.equals("-t")) {
+                Settings.storeOverride("tests", argument[1]);
+            }
+
+            // Logging
+            if (command.equals("--log") || command.equals("-l")) {
+                Settings.storeOverride("log", "true");
             }
         }
 

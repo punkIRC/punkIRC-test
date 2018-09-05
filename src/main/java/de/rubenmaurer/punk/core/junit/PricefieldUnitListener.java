@@ -22,9 +22,9 @@ public class PricefieldUnitListener implements TestExecutionListener {
 
     public void executionStarted(TestIdentifier testIdentifier) {
         display = testIdentifier.getDisplayName();
-
-        String status = ansi().fgBlue().render("PROCESSING").fgDefault().toString();
         if(!display.contains("JUnit")) {
+
+            String status = ansi().fgBlue().render("PROCESSING").fgDefault().toString();
             if (!testIdentifier.isContainer()) {
                 System.out.println(ansi().saveCursorPosition()
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(status))))));

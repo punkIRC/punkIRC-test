@@ -1,6 +1,8 @@
 package de.rubenmaurer.punk.core.facade;
 
 import akka.actor.ActorSystem;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import de.rubenmaurer.punk.core.akka.ConnectionManager;
 import de.rubenmaurer.punk.messages.Template;
 
@@ -35,7 +37,8 @@ public class Session {
     private Session(String hostname, int port, String executable) {
         if (!initiated) {
             Server.create(executable);
-            Client.connectionManager = ActorSystem.apply("pricefield").actorOf(ConnectionManager.props(hostname, port), "de.rubenmaurer.punk.test.connection-manager");
+            Config cfg = ConfigFactory.load("resources/application.conf");
+            Client.connectionManager = ActorSystem.apply("pricefield", cfg).actorOf(ConnectionManager.props(hostname, port), "de.rubenmaurer.punk.test.connection-manager");
 
             initiated = true;
         }

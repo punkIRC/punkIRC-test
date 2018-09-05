@@ -2,41 +2,41 @@ package de.rubenmaurer.punk.test.connection;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientPreset;
 import de.rubenmaurer.punk.core.util.ClientUtils;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
+import static de.rubenmaurer.punk.core.facade.Client.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MultiUserConnection extends BaseTest {
+public class MultiUserConnection extends BaseTest {
 
     @Test
     void connectTwoUsers() throws Exception {
-        Client c1 = Client.create(ClientPreset.SCHROTTY);
-        Client c2 = Client.create(ClientPreset.RACHEL);
+        Client c1 = create(Preset.SCHROTTY);
+        Client c2 = create(Preset.RACHEL);
 
         if (Session.serverIsAlive()) {
-            c1.sendAndReceive(ClientUtils.auth(c1), 4);
-            c2.sendAndReceive(ClientUtils.auth(c2), 4);
+            c1.authenticate();
+            c2.authenticate();
         }
 
-        assertTrue(Evaluation.replyWelcome(c1));
-        assertTrue(Evaluation.replyWelcome(c2));
+        Evaluation.welcome(c1);
+        Evaluation.welcome(c2);
     }
 
     @Test
     void connectDuplicateNick() throws Exception {
-        Client c1 = Client.create(ClientPreset.RACHEL);
-        Client c2 = Client.create(ClientPreset.RACHEL);
+        Client c1 = create(Preset.RACHEL);
+        Client c2 = create(Preset.RACHEL);
 
         if (Session.serverIsAlive()) {
-            c1.sendAndReceive(ClientUtils.auth(c1), 4);
-            c2.sendAndReceive(ClientUtils.auth(c2), 4);
+            c1.authenticate();
+            c2.sendAndReceiveAll(ClientUtils.auth(c2), 1);
         }
 
-        assertTrue(Evaluation.replyWelcome(c1));
-        assertTrue(Evaluation.nicknameInUse(c2));
+        Evaluation.welcome(c1);
+        Evaluation.nicknameInUse(c2);
     }
 }
