@@ -140,18 +140,6 @@ public class Client {
         return connected;
     }
 
-    public Boolean connectAndIdle() {
-        boolean isConnected = connect();
-
-        try {
-            idle(1);
-        } catch (Exception e) {
-            Log.debug(e.getMessage());
-        }
-
-        return isConnected;
-    }
-
     public void authenticate() throws Exception {
         this.sendAndReceiveAll(ClientUtils.auth(this), Settings.authLines());
     }
@@ -178,34 +166,6 @@ public class Client {
         }
 
         return new LinkedList<>();
-    }
-
-    private LinkedList<String> journal() {
-        String result = null;
-        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-        Future<Object> future = Patterns.ask(connection, "journal", timeout);
-
-        try {
-            result = (String) Await.result(future, timeout.duration());
-        } catch (Exception e) {
-            Log.debug(e.getMessage());
-        }
-
-        if (result != null) {
-            return new LinkedList<>(Arrays.asList(result.split(";")));
-        }
-
-        return new LinkedList<>();
-    }
-
-    public LinkedList<String> getJournalEntries(String part) {
-        LinkedList<String> result = new LinkedList<>();
-
-        journal().forEach(s -> {
-            if (s.contains(part)) result.add(s);
-        });
-
-        return result;
     }
 
     public LinkedList<String> log(Response response) {
@@ -307,8 +267,6 @@ public class Client {
             try {
                 lastResponse = (String) Await.result(future, timeout.duration());
                 lastLines = lastResponse.split(Settings.delimiter());
-
-                Log.debug(lastResponse);
             } catch (Exception exception) {
                 if (sendLast && expectedLines > 0) {
                     Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);

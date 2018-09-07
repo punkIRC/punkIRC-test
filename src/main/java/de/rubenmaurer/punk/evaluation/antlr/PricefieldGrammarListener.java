@@ -102,17 +102,59 @@ class PricefieldGrammarListener extends IRCBaseListener {
         stringCheck(ctx.message().getText(), values.get("message"));
     }
 
+    /* === CHANNEL's === */
+
+    @Override
+    public void enterNamelist(NamelistContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+    }
+
+    @Override
+    public void enterName_reply(Name_replyContext ctx) {
+        stringCheck(ctx.nicknames().getText(), values.get("names"));
+    }
+
+    @Override
+    public void enterEnd_of_names(End_of_namesContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+    }
+
+    @Override
+    public void enterPart(PartContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+    }
+
+    @Override
+    public void enterTopic(TopicContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+        stringCheck(ctx.message().getText(), values.get("topic"));
+    }
+
+    @Override
+    public void enterNo_topic(No_topicContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+    }
+
+    /* === LIST === */
+
+    @Override
+    public void enterList(ListContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
+        stringCheck(ctx.message().getText(), values.get("topic"));
+        intCheck(ctx.INTEGER().getText(), values.get("user"));
+    }
+
     /* === PRIVMSG & NOTICE === */
 
     @Override
     public void enterPrivate_message(Private_messageContext ctx) {
-        stringCheck(ctx.text().getText(), values.get("message"));
+        stringCheck(ctx.message().getText(), values.get("message"));
         stringCheck(ctx.target().getText(), values.get("target"));
     }
 
     @Override
     public void enterNotice(NoticeContext ctx) {
-        stringCheck(ctx.text().getText(), values.get("message"));
+        stringCheck(ctx.message().getText(), values.get("message"));
         stringCheck(ctx.target().getText(), values.get("target"));
     }
 
@@ -135,6 +177,28 @@ class PricefieldGrammarListener extends IRCBaseListener {
         stringCheck(ctx.nick().getText(), receiver.nickname());
     }
 
+    /* === WHO === */
+
+    @Override
+    public void enterWho(WhoContext ctx) {
+        stringCheck(ctx.target().getText(), values.get("target"));
+        stringCheck(ctx.user().getText(), values.get("user_who"));
+        stringCheck(ctx.nick().getText(), values.get("nick_who"));
+        stringCheck(ctx.fullname().getText(), values.get("fullname_who"));
+    }
+
+    @Override
+    public void enterEnd_of_who(End_of_whoContext ctx) {
+        stringCheck(ctx.target().getText(), values.get("target"));
+    }
+
+    /* === GENERAL === */
+
+    @Override
+    public void enterQuit(QuitContext ctx) {
+        stringCheck(ctx.message().getText(), values.get("message"));
+    }
+
     /* === IRC ERROR's === */
 
     @Override
@@ -150,5 +214,10 @@ class PricefieldGrammarListener extends IRCBaseListener {
     @Override
     public void enterUnknown_command(Unknown_commandContext ctx) {
         stringCheck(ctx.command().getText(), values.get("command"));
+    }
+
+    @Override
+    public void enterNot_on_channel(Not_on_channelContext ctx) {
+        stringCheck(ctx.channel().getText(), values.get("channel"));
     }
 }

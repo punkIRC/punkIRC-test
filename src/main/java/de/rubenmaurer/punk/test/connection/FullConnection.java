@@ -4,6 +4,7 @@ import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Client.Preset;
 import de.rubenmaurer.punk.core.facade.Session;
 import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ public class FullConnection extends BaseTest {
         Client c = Client.create(Preset.SCHROTTY);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceiveAll(ClientUtils.auth(c), 4);
+            c.authenticate();
         }
 
         Evaluation.welcome(c);
@@ -27,7 +28,7 @@ public class FullConnection extends BaseTest {
 
         if (Session.serverIsAlive()) {
             c.sendAndReceive(ClientUtils.user(c), 0);
-            c.sendAndReceive(ClientUtils.nick(c), 4);
+            c.sendAndReceive(ClientUtils.nick(c), Settings.authLines());
         }
 
         Evaluation.welcome(c);
@@ -38,7 +39,7 @@ public class FullConnection extends BaseTest {
         Client c = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceiveAll(ClientUtils.auth(c), 4);
+            c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
         }
 
         Evaluation.welcome(c);

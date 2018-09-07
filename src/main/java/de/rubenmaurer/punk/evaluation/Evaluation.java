@@ -1,7 +1,9 @@
 package de.rubenmaurer.punk.evaluation;
 
 import de.rubenmaurer.punk.core.facade.Client;
+import de.rubenmaurer.punk.core.util.Settings;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
+import sun.util.cldr.CLDRLocaleDataMetaInfo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,15 @@ public class Evaluation {
 
     public static void welcome(Client sender) {
         welcome(sender, new HashMap<>());
+    }
+
+    public static void welcome(Client sender, int user, int unknown) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("user", String.valueOf(user));
+        values.put("unknown", String.valueOf(unknown));
+        values.put("clients", String.valueOf(user + unknown));
+
+        welcome(sender, values);
     }
 
     public static void welcome(Client sender, HashMap<String, String> values) {
@@ -70,8 +81,11 @@ public class Evaluation {
         //Parser.parse(client.lastResponse(), Parser.Type.NOSUCHNICK);
     }
 
-    public static void nicknameInUse(Client client) {
-        //Parser.parse(client.log(433).getLast(), Parser.Type.NICKNAMEINUSE);
+    public static void nicknameInUse(Client sender) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("nickname", sender.nickname());
+
+        Parser.parse(sender, Response.NICKNAME_IN_USE, sender.log(Response.NICKNAME_IN_USE).getLast(), values);
     }
 
     public static void luser(Client sender) {
@@ -109,22 +123,50 @@ public class Evaluation {
         Parser.parse(sender, Response.NO_MOTD, sender.log(Response.NO_MOTD).getLast());
     }
 
-    public static void quit(Client client) {
-        //Parser.parse(client.lastResponse(), Parser.Type.QUIT);
+    public static void quit(Client sender, String message) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("message", message);
+
+        Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
+
+        Settings.sleep();
     }
 
-    public static void join(Client client) {
-        /*Parser.parse(client.lastLines()[0], Parser.Type.JOIN);
-        Parser.parse(client.log(353), Parser.Type.JOINNAME);
-        Parser.parse(client.log(366).getLast(), Parser.Type.JOINNAMEEND);*/
+    public static void join(Client sender, String channel, String... names) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < names.length; i++) {
+            if (i == 0) {
+                sb.append(String.format("@%s", names[i]));
+                continue;
+            }
+
+            sb.append(String.format(" %s", names[i]));
+        }
+
+        HashMap<String, String> values = new HashMap<>();
+        values.put("names", sb.toString());
+        values.put("channel", String.format("#%s", channel));
+
+        Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
+        Parser.parse(sender, Response.NAME_RPLY, sender.log(Response.NAME_RPLY).getLast(), values);
+        Parser.parse(sender, Response.END_OF_NAMES, sender.log(Response.END_OF_NAMES).getLast(), values);
     }
 
-    public static void join(List<Client> clients) {
-        clients.forEach(Evaluation::join);
+    public static void joinAndTopic(Client sender, String channel, String expected, String... names) {
+        join(sender, channel, names);
+
+        HashMap<String, String> values = new HashMap<>();
+        values.put("topic", expected);
+        values.put("channel", String.format("#%s", channel));
+
+        Parser.parse(sender, Response.TOPIC, sender.log(Response.TOPIC).getLast(), values);
     }
 
-    public static void channelRelay(Client client, Client target) {
-        //Parser.parse(client.lastLines()[0], Parser.Type.JOIN);
+    public static void channelRelay(Client sender, String channel) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+
+        Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
     }
 
     public static void empty(Client client) {
@@ -149,5 +191,76 @@ public class Evaluation {
         map.put("channel", String.format("#%s", channel));
 
         Parser.parse(sender, sender, r, sender.log(r).getLast(), map);
+    }
+
+    public static void part(Client sender, String channel) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+
+        Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
+    }
+
+    public static void notOnChannel(Client sender, String channel) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+
+        Parser.parse(sender, Response.NOT_ON_CHANNEL, sender.log(Response.NOT_ON_CHANNEL).getLast(), values);
+    }
+
+    public static void setTopic(Client sender, String channel, String topic) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+        values.put("topic", topic);
+
+        Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
+    }
+
+    public static void getTopic(Client sender, String channel, String expected) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+        values.put("topic", expected);
+
+        if (!expected.isEmpty()) {
+            Parser.parse(sender, Response.TOPIC, sender.log(Response.TOPIC).getLast(), values);
+            return;
+        }
+
+        Parser.parse(sender, Response.NO_TOPIC, sender.log(Response.NO_TOPIC).getLast(), values);
+    }
+
+    public static void list(Client sender, String channel, String expected, int user) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("channel", String.format("#%s", channel));
+        values.put("topic", expected);
+        values.put("user", String.valueOf(user));
+
+        Parser.parse(sender, Response.LIST, sender.log(Response.LIST).getLast(), values);
+        Parser.parse(sender, Response.LIST_END, sender.log(Response.LIST_END).getLast());
+    }
+
+    public static void who(Client sender, String channel, int offset, Client... clients) {
+        for (int i = 0; i < clients.length; i++) {
+            who(sender, channel, clients[i], i + offset);
+        }
+    }
+
+    private static void who(Client sender, String channel, Client target, int index) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("target", channel.equals("*") ? "*" : String.format("#%s", channel));
+        values.put("nick", sender.nickname());
+
+        values.put("nick_who", target.nickname());
+        values.put("user_who", target.username());
+        values.put("fullname_who", target.realname());
+
+        Parser.parse(sender, Response.WHO_RPLY, sender.log(Response.WHO_RPLY).get(index), values);
+        Parser.parse(sender, Response.END_OF_WHO, sender.log(Response.END_OF_WHO).getLast(), values);
+    }
+
+    public static void quitRelay(Client sender, String message) {
+        HashMap<String, String> values = new HashMap<>();
+        values.put("message", message);
+
+        Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
     }
 }

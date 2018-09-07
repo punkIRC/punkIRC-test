@@ -65,6 +65,17 @@ public class PrivateMessageChannel extends BaseTest {
     }
 
     @Test
+    void joinAndNoticeNoChannel() throws Exception {
+        Client c = create(Client.Preset.RACHEL);
+
+        String channel = "Lighthouse";
+        c.authenticate();
+
+        c.send(ClientUtils.notice(channel, "I love you"));
+        Evaluation.empty(c);
+    }
+
+    @Test
     void joinAndMessageNotOnChannel() throws Exception {
         Client c1 = create(Client.Preset.CHLOE);
         Client c2 = create(Client.Preset.MAX);

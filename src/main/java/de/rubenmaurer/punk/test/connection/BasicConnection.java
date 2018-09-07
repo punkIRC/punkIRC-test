@@ -94,7 +94,7 @@ public class BasicConnection extends BaseTest {
             s.send(ClientUtils.user(s));
         }
 
-        Evaluation.welcome(s);
+        Evaluation.welcome(s, 1, 2);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class BasicConnection extends BaseTest {
             s.send(ClientUtils.nick(s));
         }
 
-        Evaluation.welcome(s);
+        Evaluation.welcome(s, 1, 2);
     }
 
     @Test
@@ -118,7 +118,9 @@ public class BasicConnection extends BaseTest {
         Client c = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            assertEquals("", c.sendAndReceive(ClientUtils.nick(c), 0)[0]);
+            c.sendAndReceive(ClientUtils.nick(c), 0);
+
+            Evaluation.empty(c);
         }
     }
 
@@ -127,7 +129,9 @@ public class BasicConnection extends BaseTest {
         Client c = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            assertEquals("", c.sendAndReceive(ClientUtils.user(c), 0)[0]);
+            c.sendAndReceive(ClientUtils.user(c), 0);
+
+            Evaluation.empty(c);
         }
     }
 
@@ -137,30 +141,37 @@ public class BasicConnection extends BaseTest {
 
         if (Session.serverIsAlive()) {
             String dmgAuth = ClientUtils.auth(c).get(0);
+            c.sendAndReceive(dmgAuth.substring(0, dmgAuth.length() - 4), 0);
 
-            assertEquals("", c.sendAndReceive(dmgAuth.substring(0, dmgAuth.length() - 4), 0)[0]);
+            Evaluation.empty(c);
         }
     }
 
     @Test
     void noUnexpectedWelcome4() throws Exception {
-        Client max = Client.create(Preset.MAX);
-        Client chloe = Client.create(Preset.CHLOE);
+        Client c1 = Client.create(Preset.MAX);
+        Client c2 = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            assertEquals("", chloe.sendAndReceive(ClientUtils.nick(chloe))[0]);
-            assertEquals("", max.sendAndReceive(ClientUtils.nick(max))[0]);
+            c1.sendAndReceive(ClientUtils.nick(c1), 0);
+            c2.sendAndReceive(ClientUtils.nick(c2), 0);
+
+            Evaluation.empty(c1);
+            Evaluation.empty(c2);
         }
     }
 
     @Test
     void noUnexpectedWelcome5() throws Exception {
-        Client max = Client.create(Preset.MAX);
-        Client chloe = Client.create(Preset.CHLOE);
+        Client c1 = Client.create(Preset.MAX);
+        Client c2 = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            assertEquals("", chloe.sendAndReceive(ClientUtils.user(chloe))[0]);
-            assertEquals("", max.sendAndReceive(ClientUtils.user(max))[0]);
+            c1.sendAndReceive(ClientUtils.user(c1), 0);
+            c2.sendAndReceive(ClientUtils.user(c2), 0);
+
+            Evaluation.empty(c1);
+            Evaluation.empty(c2);
         }
     }
 }

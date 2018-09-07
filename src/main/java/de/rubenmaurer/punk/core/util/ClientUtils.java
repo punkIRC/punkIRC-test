@@ -37,10 +37,14 @@ public class ClientUtils {
                 .single("message", message).render();
     }
 
-    public static String notice(Client target, String message) {
+    public static String notice(String target, String message) {
         return Template.get("notice")
-                .single("nickname", target.nickname())
+                .single("nickname", target)
                 .single("message", message).render();
+    }
+
+    public static String notice(Client target, String message) {
+        return notice(target.nickname(), message);
     }
 
     public static String quit(String message) {
@@ -53,5 +57,25 @@ public class ClientUtils {
 
     public static String whoIs(String user) {
         return Template.get("whois").single("nickname", user).render();
+    }
+
+    public static String part(String channel, String message) {
+        return Template.get("part").single("channel", channel).single("message", message).render();
+    }
+
+    public static String setTopic(String channel, String topic) {
+        return Template.get("topic_set").single("channel", channel).single("topic", topic).render();
+    }
+
+    public static String getTopic(String channel) {
+        return Template.get("topic_get").single("channel", channel).render();
+    }
+
+    public static String list() {
+        return "LIST";
+    }
+
+    public static String list(String channel) {
+        return String.format("%s #%s", list(), channel);
     }
 }

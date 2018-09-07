@@ -159,6 +159,7 @@ public class ConnectionHandler extends AbstractActor {
                     String[] splitted = incoming.split("\r\n");
 
                     for (String split : splitted) {
+                        if (split.isEmpty()) continue;
                         int code = detectCode(split);
                         if (code != -1) {
                             if (log.getOrDefault(code, null) == null) {

@@ -8,7 +8,6 @@ import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import static de.rubenmaurer.punk.core.facade.Client.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiUserConnection extends BaseTest {
 
@@ -23,7 +22,7 @@ public class MultiUserConnection extends BaseTest {
         }
 
         Evaluation.welcome(c1);
-        Evaluation.welcome(c2);
+        Evaluation.welcome(c2, 2, 0);
     }
 
     @Test

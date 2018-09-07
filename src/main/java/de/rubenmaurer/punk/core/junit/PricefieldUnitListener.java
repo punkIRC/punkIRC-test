@@ -43,13 +43,6 @@ public class PricefieldUnitListener implements TestExecutionListener {
         }
     }
 
-    public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-        String result = ansi().fgYellow().render("IGNORE").fgDefault().toString();
-
-        System.out.println(ansi().restoreCursorPosition().eraseLine(Ansi.Erase.ALL)
-                .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(result))))));
-    }
-
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         if (!testIdentifier.getDisplayName().contains("JUnit")) {
             if (!testIdentifier.isContainer()) {

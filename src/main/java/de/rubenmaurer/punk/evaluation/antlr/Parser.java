@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Parser {
@@ -21,20 +22,22 @@ public class Parser {
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
         Log.debug(message);
 
-        CharStream stream = CharStreams.fromString(message);
+        if (!message.equals("")) {
+            CharStream stream = CharStreams.fromString(message);
 
-        IRCLexer lexer = new IRCLexer(stream);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
+            IRCLexer lexer = new IRCLexer(stream);
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-        IRCParser parser = new IRCParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(PricefieldErrorListener.INSTANCE);
+            IRCParser parser = new IRCParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), parser.response());
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), parser.response());
+        }
     }
 
     public static void parse(Client sender, Response response, String message) {
@@ -47,5 +50,9 @@ public class Parser {
 
     public static void parse(Client sender, Response response, String message, HashMap<String, String> values) {
         parse(sender, sender, response, message, values);
+    }
+
+    public static void parse(Client sender, Response response, LinkedList<String> messages, HashMap<String, String> values) {
+        messages.forEach(s -> parse(sender, response, s, values));
     }
 }

@@ -4,7 +4,9 @@ grammar IRC;
 server_response
     : DLIMIT
     ( server_response_long
-    | server_response_short )
+    | server_response_short
+    | server_response_special)
+    | server_response_error
     ;
 
 server_response_long
@@ -15,8 +17,16 @@ server_response_short
     : nick '!' user '@' host
     ;
 
+server_response_special
+    : server WHITESPACE code WHITESPACE '*' WHITESPACE nick
+    ;
+
+server_response_error
+    : 'ERROR' WHITESPACE DLIMIT
+    ;
+
 message
-    : (text | SPECIAL)+
+    : (WORD | '!' | WHITESPACE)+
     ;
 
 text
@@ -26,14 +36,22 @@ text
 target
     : channel
     | nick
+    | '*'
     ;
 
 server
-    : (WORD | SPECIAL)+
+    : (WORD
+    | INTEGER
+    | '-'
+    | '.')+
     ;
 
 version
-    : (WORD | SPECIAL | WHITESPACE | INTEGER)+
+    : (WORD
+    | WHITESPACE
+    | INTEGER
+    | '-'
+    | '.')+
     ;
 
 code
@@ -41,7 +59,11 @@ code
     ;
 
 nick
-    : WORD
+    : (WORD | INTEGER)+?
+    ;
+
+nicknames
+    : '@' (nick | WHITESPACE)+
     ;
 
 user
@@ -57,7 +79,8 @@ host
     ;
 
 channel
-    : '#' WORD
+    : '#' (WORD
+    | '-')+
     ;
 
 command
@@ -100,10 +123,26 @@ response
     | motd_start
     | motd
     | end_of_motd
+    | quit
+    | namelist
+    | name_reply
+    | end_of_names
+    | part
+    | not_on_channel
+    | topic
+    | no_topic
+    | list
+    | listend
+    | who
+    | end_of_who
     ;
 
 pong
     : 'PONG'
+    ;
+
+quit
+    : server_response 'Closing Link' DLIMIT WHITESPACE host WHITESPACE '(' message ')'
     ;
 
 /* === WELCOME === */
@@ -160,14 +199,51 @@ end_of_motd
     : server_response WHITESPACE DLIMIT 'End of MOTD command'
     ;
 
+/* === CHANNELS's === */
+
+namelist
+    : server_response WHITESPACE 'JOIN' WHITESPACE channel
+    ;
+
+name_reply
+    : server_response WHITESPACE '=' WHITESPACE channel WHITESPACE DLIMIT nicknames
+    ;
+
+end_of_names
+    : server_response WHITESPACE channel WHITESPACE DLIMIT 'End of NAMES list'
+    ;
+
+part
+    : server_response WHITESPACE 'PART' WHITESPACE channel
+    ;
+
+topic
+    : server_response WHITESPACE 'TOPIC' WHITESPACE channel WHITESPACE DLIMIT message
+    | server_response WHITESPACE channel WHITESPACE DLIMIT message
+    ;
+
+no_topic
+    : server_response WHITESPACE channel WHITESPACE DLIMIT 'No topic is set'
+    ;
+
+/* === LIST === */
+
+list
+    : server_response WHITESPACE channel WHITESPACE INTEGER WHITESPACE DLIMIT message?
+    ;
+
+listend
+    : server_response WHITESPACE DLIMIT 'End of LIST'
+    ;
+
 /* === PRIVMSG & NOTICE === */
 
 private_message
-    : server_response WHITESPACE 'PRIVMSG' WHITESPACE target WHITESPACE DLIMIT text
+    : server_response WHITESPACE 'PRIVMSG' WHITESPACE target WHITESPACE DLIMIT message
     ;
 
 notice
-    : server_response WHITESPACE 'NOTICE' WHITESPACE target WHITESPACE DLIMIT text
+    : server_response WHITESPACE 'NOTICE' WHITESPACE target WHITESPACE DLIMIT message
     ;
 
 /* === WHOIS === */
@@ -182,6 +258,17 @@ who_is_server
 
 end_of_who_is
     : server_response WHITESPACE nick WHITESPACE DLIMIT 'End of WHOIS list'
+    ;
+
+/* === WHO === */
+
+who
+    : server_response WHITESPACE target WHITESPACE user WHITESPACE host WHITESPACE server WHITESPACE nick WHITESPACE
+        'H' '@'? WHITESPACE DLIMIT INTEGER WHITESPACE fullname
+    ;
+
+end_of_who
+    : server_response WHITESPACE target WHITESPACE DLIMIT 'End of WHO list'
     ;
 
 /* === ERROR's === */
@@ -199,11 +286,15 @@ no_motd
     ;
 
 nickname_in_use
-    : server_response WHITESPACE
+    : server_response WHITESPACE DLIMIT 'Nickname is already in use'
     ;
 
 unknown_command
     : server_response WHITESPACE command WHITESPACE DLIMIT 'Unknown command'
+    ;
+
+not_on_channel
+    : server_response WHITESPACE channel WHITESPACE DLIMIT 'You\'re not on that channel'
     ;
 
 // IRC LEXER RULES
@@ -212,19 +303,12 @@ DLIMIT
     ;
 
 WORD
-    : (CHAR
-    | SPECIAL)+
+    : CHAR+
     ;
 
 CHAR
-    : [a-z]
-    | [A-Z]
-    ;
-
-SPECIAL
-    : '-'
-    | '.'
-    | '!'
+    : 'a'..'z'
+    | 'A'..'Z'
     ;
 
 WHITESPACE
@@ -233,5 +317,15 @@ WHITESPACE
     ;
 
 INTEGER
-    : [0-9]+
+    : INT+
+    ;
+
+INT
+    : '0'..'9'
+    ;
+
+SPECIAL
+    : '-'
+    | '.'
+    | '!'
     ;

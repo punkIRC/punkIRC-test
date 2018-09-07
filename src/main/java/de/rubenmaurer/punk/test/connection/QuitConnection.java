@@ -17,24 +17,26 @@ public class QuitConnection extends BaseTest {
     void quitAfterRegistration1() throws Exception {
         Client c = Client.create(Preset.SCHROTTY);
 
+        String msg = "Goodbye!";
         if (Session.serverIsAlive()) {
             c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
-            c.sendAndReceive(ClientUtils.quit("Goodbye!"), 1);
+            c.sendAndReceive(ClientUtils.quit(msg), 1);
         }
 
-        Evaluation.quit(c);
+        Evaluation.quit(c, msg);
     }
 
     @Test
     void quitAfterRegistration2() throws Exception {
         Client c = Client.create(Preset.SCHROTTY);
 
+        String msg = "Goodbye!";
         if (Session.serverIsAlive()) {
             c.sendAndReceiveAll(ClientUtils.auth(c), Settings.authLines());
-            c.sendAndReceive(ClientUtils.quit("Goodbye!"), 1);
+            c.sendAndReceive(ClientUtils.quit(msg), 1);
         }
 
-        Evaluation.quit(c);
+        Evaluation.quit(c, msg);
         assertFalse(c.isConnected());
     }
 
@@ -47,7 +49,7 @@ public class QuitConnection extends BaseTest {
             c.sendAndReceive("QUIT", 1);
         }
 
-        Evaluation.quit(c);
+        Evaluation.quit(c, "Client Quit");
         assertFalse(c.isConnected());
     }
 
@@ -64,10 +66,10 @@ public class QuitConnection extends BaseTest {
             c2.sendAndReceive(ClientUtils.quit("See ya!"), 1);
         }
 
-        Evaluation.quit(c1);
+        Evaluation.quit(c1, "Goodbye!");
         assertFalse(c1.isConnected());
 
-        Evaluation.quit(c2);
+        Evaluation.quit(c2, "See ya!");
         assertFalse(c2.isConnected());
     }
 }

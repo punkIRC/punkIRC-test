@@ -16,7 +16,7 @@ public class Log {
     }
 
     private static String template(String message) {
-        return Template.get("DEBUG").single("message", message).render();
+        return Template.get("DEBUG").single("message", String.format("\r\n%s", message)).render();
     }
 
     private static String template(String[] message) {

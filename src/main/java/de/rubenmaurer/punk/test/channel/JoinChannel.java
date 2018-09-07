@@ -16,25 +16,27 @@ public class JoinChannel extends BaseTest {
     void testJoin1() throws Exception {
         Client c = create(Preset.MAX);
 
+        String channel = "Arcadia-Dinner";
         if (Session.serverIsAlive()) {
             c.authenticate();
-            c.sendAndReceive(ClientUtils.joinChannel("Arcadia-Dinner"), 3);
+            c.sendAndReceive(ClientUtils.joinChannel(channel), 3);
         }
 
-        Evaluation.join(c);
+        Evaluation.join(c, channel, c.nickname());
     }
 
     @Test
     void testJoin2() throws Exception {
         Client c = create(Preset.CHLOE);
 
+        String channel = "Arcadia-Dinner";
         if (Session.serverIsAlive()) {
             c.authenticate();
 
-            c.sendAndReceive(ClientUtils.joinChannel("Arcadia-Dinner"), 3);
-            Evaluation.join(c);
+            c.sendAndReceive(ClientUtils.joinChannel(channel), 3);
+            Evaluation.join(c, channel, c.nickname());
 
-            c.sendAndReceive(ClientUtils.joinChannel("Arcadia-Dinner"), 3, false);
+            c.sendAndReceive(ClientUtils.joinChannel(channel), 3, false);
         }
 
         Evaluation.empty(c);
@@ -57,11 +59,11 @@ public class JoinChannel extends BaseTest {
             c5.authenticateAndJoin(channel);
         }
 
-        Evaluation.join(c1);
-        Evaluation.join(c2);
-        Evaluation.join(c3);
-        Evaluation.join(c4);
-        Evaluation.join(c5);
+        Evaluation.join(c1, channel, c1.nickname());
+        Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
+        Evaluation.join(c3, channel, c1.nickname(), c2.nickname(), c3.nickname());
+        Evaluation.join(c4, channel, c1.nickname(), c2.nickname(), c3.nickname(), c4.nickname());
+        Evaluation.join(c5, channel, c1.nickname(), c2.nickname(), c3.nickname(), c4.nickname(), c5.nickname());
     }
 
     @Test
@@ -73,14 +75,14 @@ public class JoinChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c1.authenticate();
             c1.sendAndReceive(ClientUtils.joinChannel(channel));
-            Evaluation.join(c1);
+            Evaluation.join(c1, channel, c1.nickname());
 
             c2.authenticate();
             c2.sendAndReceive(ClientUtils.joinChannel(channel));
-            Evaluation.join(c2);
+            Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
         }
 
-        Evaluation.channelRelay(c1, c2);
+        Evaluation.channelRelay(c1, channel);
     }
 
     @Test
@@ -93,18 +95,18 @@ public class JoinChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c1.authenticate();
             c1.sendAndReceive(ClientUtils.joinChannel(channel));
-            Evaluation.join(c1);
+            Evaluation.join(c1, channel, c1.nickname());
 
             c2.authenticate();
             c2.sendAndReceive(ClientUtils.joinChannel(channel));
-            Evaluation.join(c2);
+            Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
 
             c3.authenticate();
             c3.sendAndReceive(ClientUtils.joinChannel(channel));
-            Evaluation.join(c3);
+            Evaluation.join(c3, channel, c1.nickname(), c2.nickname(), c3.nickname());
         }
 
-        Evaluation.channelRelay(c1, c2);
-        Evaluation.channelRelay(c2, c3);
+        Evaluation.channelRelay(c1, channel);
+        Evaluation.channelRelay(c2, channel);
     }
 }

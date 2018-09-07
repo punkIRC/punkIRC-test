@@ -13,14 +13,24 @@ public enum Response {
     LUSER_ME (255),
     WHO_IS_USER (311),
     WHO_IS_SERVER (312),
+    END_OF_WHO (315),
     END_OF_WHO_IS (318),
+    LIST (322),
+    LIST_END (323),
+    NO_TOPIC (331),
+    TOPIC (332),
+    WHO_RPLY (352),
+    NAME_RPLY (353),
+    END_OF_NAMES (366),
     MOTD (372),
     MOTD_START (375),
     END_OF_MOTD (376),
     NO_SUCH_NICK (401),
     CANNOT_SEND_TO_CHANNEL (404),
     UNKNOWN_COMMAND (421),
-    NO_MOTD (422);
+    NO_MOTD (422),
+    NICKNAME_IN_USE (433),
+    NOT_ON_CHANNEL (442);
 
     public final int value;
 

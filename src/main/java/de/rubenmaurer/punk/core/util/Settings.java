@@ -117,14 +117,13 @@ public class Settings {
 
         for (String cls : loadOverride("tests").split(" ")) {
             if (cls.equals("Channel")) {
-                //classes.add(AssigmentChannel.class);
-                //classes.add(JoinChannel.class);
-                //classes.add(ListChannel.class);
-                //classes.add(NamesChannel.class);
-                //classes.add(PartChannel.class);
+                classes.add(AssigmentChannel.class);
+                classes.add(JoinChannel.class);
+                classes.add(ListChannel.class);
+                classes.add(PartChannel.class);
                 classes.add(PrivateMessageChannel.class);
-                //classes.add(TopicChannel.class);
-                //classes.add(WhoChannel.class);
+                classes.add(TopicChannel.class);
+                classes.add(WhoChannel.class);
             }
 
             if (cls.equals("Connection")) {
@@ -211,5 +210,13 @@ public class Settings {
 
     public static int authLines() {
         return Integer.parseInt(self.properties.getProperty("authLines"));
+    }
+
+    public static void sleep() {
+        try {
+            Thread.sleep(1000);
+        } catch (Exception ignore) {
+
+        }
     }
 }
