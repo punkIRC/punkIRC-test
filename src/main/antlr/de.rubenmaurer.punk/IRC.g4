@@ -26,7 +26,7 @@ server_response_error
     ;
 
 message
-    : (WORD | '!' | WHITESPACE)+
+    : (WORD | '!' | WHITESPACE | INTEGER)+
     ;
 
 text
