@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test.channel;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticateAndJoin(channel);
 
-            c.sendAndReceive(ClientUtils.setTopic(channel, topic));
+            c.sendAndReceive(Utilities.setTopic(channel, topic));
         }
 
         Evaluation.setTopic(c, channel, topic);
@@ -36,8 +36,8 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticateAndJoin(channel);
 
-            c.sendAndReceive(ClientUtils.setTopic(channel, topic));
-            c.sendAndReceive(ClientUtils.getTopic(channel));
+            c.sendAndReceive(Utilities.setTopic(channel, topic));
+            c.sendAndReceive(Utilities.getTopic(channel));
         }
 
         Evaluation.getTopic(c, channel, topic);
@@ -51,7 +51,7 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticateAndJoin(channel);
 
-            c.sendAndReceive(ClientUtils.getTopic(channel));
+            c.sendAndReceive(Utilities.getTopic(channel));
         }
 
         Evaluation.getTopic(c, channel, "");
@@ -65,7 +65,7 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticate();
 
-            c.sendAndReceive(ClientUtils.getTopic(channel));
+            c.sendAndReceive(Utilities.getTopic(channel));
         }
 
         Evaluation.notOnChannel(c, channel);
@@ -79,7 +79,7 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticate();
 
-            c.sendAndReceive(ClientUtils.setTopic(channel, "Those damn students!"));
+            c.sendAndReceive(Utilities.setTopic(channel, "Those damn students!"));
         }
 
         Evaluation.notOnChannel(c, channel);
@@ -95,8 +95,8 @@ public class TopicChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticate();
 
-            c1.sendAndReceive(ClientUtils.setTopic(channel, "Those damn students!"));
-            c2.sendAndReceive(ClientUtils.getTopic(channel));
+            c1.sendAndReceive(Utilities.setTopic(channel, "Those damn students!"));
+            c2.sendAndReceive(Utilities.getTopic(channel));
         }
 
         Evaluation.notOnChannel(c2, channel);
@@ -112,7 +112,7 @@ public class TopicChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticate();
 
-            c2.sendAndReceive(ClientUtils.getTopic(channel));
+            c2.sendAndReceive(Utilities.getTopic(channel));
         }
 
         Evaluation.notOnChannel(c2, channel);
@@ -127,7 +127,7 @@ public class TopicChannel extends BaseTest {
         String topic = "All the marble";
         if (Session.serverIsAlive()) {
             c1.authenticateAndJoin(channel);
-            c1.sendAndReceive(ClientUtils.setTopic(channel, topic));
+            c1.sendAndReceive(Utilities.setTopic(channel, topic));
 
             c2.authenticateAndJoin(channel);
         }
@@ -147,7 +147,7 @@ public class TopicChannel extends BaseTest {
         String topic = "All the marble";
         if (Session.serverIsAlive()) {
             c1.authenticateAndJoin(channel);
-            c1.sendAndReceive(ClientUtils.setTopic(channel, topic));
+            c1.sendAndReceive(Utilities.setTopic(channel, topic));
 
             c2.authenticateAndJoin(channel);
             c3.authenticateAndJoin(channel);

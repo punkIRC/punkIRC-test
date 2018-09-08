@@ -1,16 +1,15 @@
 package de.rubenmaurer.punk.core.junit;
 
-import de.rubenmaurer.punk.Pricefield;
-import de.rubenmaurer.punk.core.util.Settings;
-import de.rubenmaurer.punk.core.util.Terminal;
+import de.rubenmaurer.punk.util.Terminal;
 import org.fusesource.jansi.Ansi;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -18,7 +17,11 @@ public class PricefieldUnitListener implements TestExecutionListener {
 
     private String display;
 
+    public static Map<TestExecutionResult.Status, List<String>> testResults = new HashMap<>();
+
     private int testCount, success, failed, aborted;
+
+    private int maxTestCount, maxSuccess, maxFailed, maxAborted;
 
     public void executionStarted(TestIdentifier testIdentifier) {
         display = testIdentifier.getDisplayName();
@@ -30,6 +33,7 @@ public class PricefieldUnitListener implements TestExecutionListener {
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(status))))));
 
                 testCount++;
+                maxTestCount++;
                 return;
             }
 
@@ -53,39 +57,36 @@ public class PricefieldUnitListener implements TestExecutionListener {
                     result = ansi().fgRed().render(status.name()).fgDefault().toString();
                     if (status.equals(TestExecutionResult.Status.ABORTED)) {
                         aborted++;
+                        maxAborted++;
                     }
 
                     if (status.equals(TestExecutionResult.Status.FAILED)) {
                         failed++;
+                        maxFailed++;
                     }
                 }
 
                 if (status.equals(TestExecutionResult.Status.SUCCESSFUL)) {
                     result = ansi().fgGreen().render(status.name()).fgDefault().toString();
                     success++;
+                    maxSuccess++;
                 }
 
                 System.out.println(ansi().restoreCursorPosition().eraseLine(Ansi.Erase.ALL)
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(result))))));
 
+                if (testResults.getOrDefault(status, null) == null) {
+                    testResults.put(status, new LinkedList<>());
+                }
+
+                testResults.get(status).add(testIdentifier.getDisplayName());
+
                 return;
             }
 
-            PrintStream out = System.out;
             String summary = String.format("%s%s",
                     Terminal.center(String.format("[TESTS]: %s [SUCCESS]: %s [ABORTED]: %s [FAILURES]: %s", testCount, success, aborted, failed)),
                     Terminal.center(String.format("[SUCCESS-RATE]: %d%%", (int)((success * 1.0 / testCount * 1.0) * 100))));
-
-            try {
-                System.setOut(new PrintStream(new FileOutputStream(
-                        new File(String.format("%s/%s/result.log", Settings.results(), Pricefield.ID)))));
-
-                System.out.println(summary);
-            } catch(Exception e) {
-                Terminal.printError(Terminal.center(e.getMessage()));
-            } finally {
-                System.setOut(out);
-            }
 
             System.out.println(ansi()
                     .render(Terminal.getDivider("-"))

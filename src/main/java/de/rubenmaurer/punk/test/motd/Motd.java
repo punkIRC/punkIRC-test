@@ -3,8 +3,8 @@ package de.rubenmaurer.punk.test.motd;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Client.Preset;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
-import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,8 @@ public class Motd extends BaseTest {
         Client c = Client.create(Preset.RACHEL);
 
         if (Session.serverIsAlive()) {
-            c.sendAndReceive(ClientUtils.user(c), 0);
-            c.sendAndReceive(ClientUtils.nick(c), Settings.authLines());
+            c.sendAndReceive(Utilities.user(c), 0);
+            c.sendAndReceive(Utilities.nick(c), Settings.authLines());
         }
 
         Evaluation.luser(c);
@@ -70,7 +70,7 @@ public class Motd extends BaseTest {
         Client c2 = Client.create(Preset.CHLOE);
 
         if (Session.serverIsAlive()) {
-            c2.sendAndReceive(ClientUtils.nick(c2), 0);
+            c2.sendAndReceive(Utilities.nick(c2), 0);
             c1.authenticate();
         }
 

@@ -1,10 +1,12 @@
-package de.rubenmaurer.punk.core.util;
+package de.rubenmaurer.punk.util;
 
-import de.rubenmaurer.punk.messages.Template;
+import de.rubenmaurer.punk.Settings;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class Terminal {
 
@@ -12,7 +14,16 @@ public class Terminal {
 
     private static final int CAGE_SIZE = 28;
 
-    public static String getDivider() {
+    public static void printHeader() {
+        System.out.println(ansi()
+                .render(Terminal.getDivider())
+                .render(Terminal.center(String.format("Project Pricefield | [Version]: %s | [Build]: %s", Settings.version(), Settings.build())))
+                .render(Terminal.getDivider())
+                .render(Terminal.center(String.format("ID: %s", Settings.generateID())))
+                .render(Terminal.getDivider()));
+    }
+
+    private static String getDivider() {
         return getDivider("=");
     }
 
@@ -24,34 +35,22 @@ public class Terminal {
         return center(input, LINE_LENGTH);
     }
 
-    public static String center(String input, int length) {
+    private static String center(String input, int length) {
         return center(input, length, true);
     }
 
-    public static String center(String input, int length, boolean newLine) {
+    private static String center(String input, int length, boolean newLine) {
         String format = "%s";
         if (newLine) format = "%s\r\n";
 
         return String.format(format, StringUtils.center(input, length));
     }
 
-    public static String left(String input) {
-        return StringUtils.left(input.intern(), LINE_LENGTH);
-    }
-
-    public static String right(String input) {
-        return StringUtils.right(input.intern(), LINE_LENGTH);
-    }
-
     public static String twoSidedColumn(String col1, String col2) {
         return twoSidedColumn(col1, col2, 10, false);
     }
 
-    public static String twoSidedColumn(String col1, String col2, boolean newLine) {
-        return twoSidedColumn(col1, col2, 10, newLine);
-    }
-
-    public static String twoSidedColumn(String col1, String col2, int comp, boolean newLine) {
+    private static String twoSidedColumn(String col1, String col2, int comp, boolean newLine) {
         int space = LINE_LENGTH - (col1.length() + col2.length()) + comp;
 
         if (newLine) {
@@ -77,5 +76,19 @@ public class Terminal {
                             .single("message", message)
                             .single("place", source).render()));
         }
+    }
+
+    /* === LOGGING === */
+
+    public static void debugRecv(String message) {
+        System.err.println(Template.recv(message));
+    }
+
+    public static void debugSend(String message) {
+        System.err.println(Template.send(message));
+    }
+
+    public static void debugErro(String message) {
+        System.err.println(Template.erro(message));
     }
 }

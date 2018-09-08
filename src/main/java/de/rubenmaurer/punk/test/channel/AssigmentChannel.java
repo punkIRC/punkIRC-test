@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test.channel;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class AssigmentChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticateAndJoin(channel);
 
-            c1.sendAndReceive(ClientUtils.quit("Bye!"));
+            c1.sendAndReceive(Utilities.quit("Bye!"));
         }
 
         Evaluation.quitRelay(c1, "Bye!");

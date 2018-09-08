@@ -1,7 +1,7 @@
 package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.core.junit.PricefieldUnitListener;
-import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.util.Terminal;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -9,6 +9,9 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,5 +29,20 @@ class TestLauncher {
         launcher.registerTestExecutionListeners(listener);
 
         launcher.execute(request);
+
+        try {
+            System.setOut(new PrintStream(new File(String.format("%s/%s/results.log", Settings.logs(), Pricefield.ID))));
+
+            PricefieldUnitListener.testResults.forEach((status, test) -> {
+                System.out.println(String.format("%s: ", status.name()));
+                test.forEach( t -> System.out.println(String.format("- %s", t)));
+
+                System.out.println();
+            });
+        } catch (FileNotFoundException e) {
+            Terminal.debugErro(e.getMessage());
+        }
+
+        System.exit(0);
     }
 }

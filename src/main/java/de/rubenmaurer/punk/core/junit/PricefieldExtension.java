@@ -1,6 +1,6 @@
 package de.rubenmaurer.punk.core.junit;
 
-import de.rubenmaurer.punk.core.util.Terminal;
+import de.rubenmaurer.punk.util.Terminal;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 

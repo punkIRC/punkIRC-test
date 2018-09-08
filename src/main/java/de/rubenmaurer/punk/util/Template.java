@@ -1,10 +1,12 @@
-package de.rubenmaurer.punk.messages;
+package de.rubenmaurer.punk.util;
 
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.lang.management.ManagementFactory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Helper for accessing string templates.
@@ -50,6 +52,27 @@ public class Template {
         return new Template(templates.getInstanceOf(template));
     }
 
+    static String recv(String message) {
+        return Template.get("DEBUG")
+                .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+                .single("type", "RECV")
+                .single("message", message).render();
+    }
+
+    static String send(String message) {
+        return Template.get("DEBUG")
+                .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+                .single("type", "SEND")
+                .single("message", message).render();
+    }
+
+    static String erro(String message) {
+        return Template.get("DEBUG")
+                .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+                .single("type", "ERROR")
+                .single("message", message).render();
+    }
+
     /**
      * Fill a single var in loaded template.
      *
@@ -69,7 +92,7 @@ public class Template {
      * @param values the values
      * @return the rendered template
      */
-    public Template single(String key, String[] values) {
+    Template single(String key, String[] values) {
         StringBuilder sb = new StringBuilder();
         for (String value : values) {
             sb.append(String.format("%s;", value));

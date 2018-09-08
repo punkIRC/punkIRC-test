@@ -3,7 +3,7 @@ package de.rubenmaurer.punk.test.channel;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Client.Preset;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class JoinChannel extends BaseTest {
         String channel = "Arcadia-Dinner";
         if (Session.serverIsAlive()) {
             c.authenticate();
-            c.sendAndReceive(ClientUtils.joinChannel(channel), 3);
+            c.sendAndReceive(Utilities.joinChannel(channel), 3);
         }
 
         Evaluation.join(c, channel, c.nickname());
@@ -33,10 +33,10 @@ public class JoinChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticate();
 
-            c.sendAndReceive(ClientUtils.joinChannel(channel), 3);
+            c.sendAndReceive(Utilities.joinChannel(channel), 3);
             Evaluation.join(c, channel, c.nickname());
 
-            c.sendAndReceive(ClientUtils.joinChannel(channel), 3, false);
+            c.sendAndReceive(Utilities.joinChannel(channel), 3, false);
         }
 
         Evaluation.empty(c);
@@ -74,11 +74,11 @@ public class JoinChannel extends BaseTest {
         String channel = "Dinner";
         if (Session.serverIsAlive()) {
             c1.authenticate();
-            c1.sendAndReceive(ClientUtils.joinChannel(channel));
+            c1.sendAndReceive(Utilities.joinChannel(channel));
             Evaluation.join(c1, channel, c1.nickname());
 
             c2.authenticate();
-            c2.sendAndReceive(ClientUtils.joinChannel(channel));
+            c2.sendAndReceive(Utilities.joinChannel(channel));
             Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
         }
 
@@ -94,15 +94,15 @@ public class JoinChannel extends BaseTest {
         String channel = "Dinner";
         if (Session.serverIsAlive()) {
             c1.authenticate();
-            c1.sendAndReceive(ClientUtils.joinChannel(channel));
+            c1.sendAndReceive(Utilities.joinChannel(channel));
             Evaluation.join(c1, channel, c1.nickname());
 
             c2.authenticate();
-            c2.sendAndReceive(ClientUtils.joinChannel(channel));
+            c2.sendAndReceive(Utilities.joinChannel(channel));
             Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
 
             c3.authenticate();
-            c3.sendAndReceive(ClientUtils.joinChannel(channel));
+            c3.sendAndReceive(Utilities.joinChannel(channel));
             Evaluation.join(c3, channel, c1.nickname(), c2.nickname(), c3.nickname());
         }
 

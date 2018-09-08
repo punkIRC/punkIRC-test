@@ -1,7 +1,7 @@
 package de.rubenmaurer.punk.test.channel;
 
 import de.rubenmaurer.punk.core.facade.Client;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class PrivateMessageChannel extends BaseTest {
         c1.authenticateAndJoin(channel);
         c2.authenticateAndJoin(channel);
 
-        c1.send(ClientUtils.privateMessage(channel, message));
+        c1.send(Utilities.privateMessage(channel, message));
         Evaluation.privateMessage(c1, c2, channel, message, true);
     }
 
@@ -40,16 +40,16 @@ public class PrivateMessageChannel extends BaseTest {
         c3.authenticateAndJoin(channel);
         c4.authenticateAndJoin(channel);
 
-        c1.send(ClientUtils.privateMessage(channel, msgs[0]));
+        c1.send(Utilities.privateMessage(channel, msgs[0]));
         Evaluation.privateMessage(c1, c2, channel, msgs[0], true);
 
-        c2.send(ClientUtils.privateMessage(channel, msgs[1]));
+        c2.send(Utilities.privateMessage(channel, msgs[1]));
         Evaluation.privateMessage(c2, c3, channel, msgs[1], true);
 
-        c3.send(ClientUtils.privateMessage(channel, msgs[2]));
+        c3.send(Utilities.privateMessage(channel, msgs[2]));
         Evaluation.privateMessage(c3, c4, channel, msgs[2], true);
 
-        c4.send(ClientUtils.privateMessage(channel, msgs[3]));
+        c4.send(Utilities.privateMessage(channel, msgs[3]));
         Evaluation.privateMessage(c4, c1, channel, msgs[3], true);
     }
 
@@ -60,7 +60,7 @@ public class PrivateMessageChannel extends BaseTest {
         String channel = "Lighthouse";
         c1.authenticate();
 
-        c1.send(ClientUtils.privateMessage(channel, "I love you"));
+        c1.send(Utilities.privateMessage(channel, "I love you"));
         Evaluation.noSuchChannel(c1, channel);
     }
 
@@ -71,7 +71,7 @@ public class PrivateMessageChannel extends BaseTest {
         String channel = "Lighthouse";
         c.authenticate();
 
-        c.send(ClientUtils.notice(channel, "I love you"));
+        c.send(Utilities.notice(channel, "I love you"));
         Evaluation.empty(c);
     }
 
@@ -84,7 +84,7 @@ public class PrivateMessageChannel extends BaseTest {
         c1.authenticateAndJoin(channel);
         c2.authenticate();
 
-        c2.send(ClientUtils.privateMessage(channel, "I love you"));
+        c2.send(Utilities.privateMessage(channel, "I love you"));
         Evaluation.cannotSendToChannel(c2, channel);
     }
 }

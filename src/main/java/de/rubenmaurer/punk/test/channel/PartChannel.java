@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test.channel;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class PartChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticateAndJoin(channel);
 
-            c1.sendAndReceive(ClientUtils.part(channel, message), 1);
+            c1.sendAndReceive(Utilities.part(channel, message), 1);
         }
 
         Evaluation.part(c1, channel);
@@ -59,11 +59,11 @@ public class PartChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticateAndJoin(channel);
 
-            c1.sendAndReceive(ClientUtils.privateMessage(channel, message));
+            c1.sendAndReceive(Utilities.privateMessage(channel, message));
             Evaluation.privateMessage(c1, c2, channel, message, true);
 
-            c2.sendAndReceive(ClientUtils.part(channel, quit), 1);
-            c1.sendAndReceive(ClientUtils.privateMessage(channel, message));
+            c2.sendAndReceive(Utilities.part(channel, quit), 1);
+            c1.sendAndReceive(Utilities.privateMessage(channel, message));
 
             Evaluation.privateMessage(c1, c2, channel, message, true);
         }
@@ -80,8 +80,8 @@ public class PartChannel extends BaseTest {
             c1.authenticateAndJoin(channel);
             c2.authenticateAndJoin(channel);
 
-            c1.sendAndReceive(ClientUtils.part(channel, message), 1);
-            c2.sendAndReceive(ClientUtils.part(channel, message), 1);
+            c1.sendAndReceive(Utilities.part(channel, message), 1);
+            c2.sendAndReceive(Utilities.part(channel, message), 1);
         }
 
         Evaluation.part(c1, channel);
@@ -95,7 +95,7 @@ public class PartChannel extends BaseTest {
         String channel = "Lighthouse";
         c1.authenticate();
 
-        c1.send(ClientUtils.part(channel, "What ever"));
+        c1.send(Utilities.part(channel, "What ever"));
         Evaluation.noSuchChannel(c1, channel);
     }
 

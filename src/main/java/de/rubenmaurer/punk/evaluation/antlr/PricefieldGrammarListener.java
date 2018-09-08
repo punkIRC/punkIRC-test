@@ -164,7 +164,7 @@ class PricefieldGrammarListener extends IRCBaseListener {
     public void enterWho_is_user(Who_is_userContext ctx) {
         stringCheck(ctx.nick().getText(), receiver.nickname());
         stringCheck(ctx.user().getText(), receiver.username());
-        stringCheck(ctx.fullname().getText(), receiver.realname());
+        stringCheck(ctx.fullname().getText(), receiver.fullname());
     }
 
     @Override

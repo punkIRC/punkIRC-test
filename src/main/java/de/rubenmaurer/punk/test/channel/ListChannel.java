@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test.channel;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class ListChannel extends BaseTest {
             c2.authenticateAndJoin(channel);
             c3.authenticateAndJoin(channel);
 
-            c1.sendAndReceive(ClientUtils.list(channel), 2);
+            c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
         Evaluation.list(c1, channel, "Burn", 3);
@@ -42,8 +42,8 @@ public class ListChannel extends BaseTest {
             c2.authenticateAndJoin(channel);
             c3.authenticateAndJoin("Hell");
 
-            c1.sendAndReceive(ClientUtils.setTopic(channel, topic));
-            c1.sendAndReceive(ClientUtils.list(channel), 2);
+            c1.sendAndReceive(Utilities.setTopic(channel, topic));
+            c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
         Evaluation.list(c1, channel, topic, 2);
@@ -62,7 +62,7 @@ public class ListChannel extends BaseTest {
             c2.authenticate();
             c3.authenticate();
 
-            c1.sendAndReceive(ClientUtils.list(channel), 2);
+            c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
         Evaluation.list(c1, channel, "", 0);
@@ -78,12 +78,12 @@ public class ListChannel extends BaseTest {
         String topic = "Nerdistan";
         if (Session.serverIsAlive()) {
             c3.authenticateAndJoin(channel);
-            c3.sendAndReceive(ClientUtils.setTopic(channel, topic));
+            c3.sendAndReceive(Utilities.setTopic(channel, topic));
 
             c2.authenticate();
             c1.authenticate();
 
-            c1.sendAndReceive(ClientUtils.list(channel), 2);
+            c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
         Evaluation.list(c3, channel, topic, 1);

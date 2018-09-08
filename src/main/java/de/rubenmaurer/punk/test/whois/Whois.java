@@ -3,9 +3,7 @@ package de.rubenmaurer.punk.test.whois;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Client.Preset;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
 import de.rubenmaurer.punk.evaluation.Evaluation;
-import de.rubenmaurer.punk.messages.Template;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +18,7 @@ public class Whois extends BaseTest {
             c1.authenticate();
             c2.authenticate();
 
-            c2.sendAndReceive(ClientUtils.whoIs(c1.nickname()), 3, false);
+            c2.sendAndReceive(Client.Utilities.whoIs(c1.nickname()), 3, false);
         }
 
         Evaluation.whois(c2, c1);

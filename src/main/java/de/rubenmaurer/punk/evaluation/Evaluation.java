@@ -1,12 +1,10 @@
 package de.rubenmaurer.punk.evaluation;
 
 import de.rubenmaurer.punk.core.facade.Client;
-import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
-import sun.util.cldr.CLDRLocaleDataMetaInfo;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Evaluation {
 
@@ -251,7 +249,7 @@ public class Evaluation {
 
         values.put("nick_who", target.nickname());
         values.put("user_who", target.username());
-        values.put("fullname_who", target.realname());
+        values.put("fullname_who", target.fullname());
 
         Parser.parse(sender, Response.WHO_RPLY, sender.log(Response.WHO_RPLY).get(index), values);
         Parser.parse(sender, Response.END_OF_WHO, sender.log(Response.END_OF_WHO).getLast(), values);

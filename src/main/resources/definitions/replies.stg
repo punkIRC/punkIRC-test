@@ -1,3 +1,0 @@
-RPL_WELCOME(nick, user) ::= ":001 <nick> :Welcome to the Internet Relay Network <nick>!<user>"
-PING() ::= "PONG"
-UNKNOWN(nick, user) ::= "421 <nick> :Unkown command"

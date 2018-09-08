@@ -9,4 +9,4 @@ LOG_ERROR(timestamp, message, place) ::= "[<place>@<timestamp>]: <message>"
 TERMINATE_MESSAGE(id) ::= "See 'logs/<id>/pricefield.log' for detailed information."
 
 //Debugging  log messages
-DEBUG(message) ::= "DEBUG <message>"
+DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"

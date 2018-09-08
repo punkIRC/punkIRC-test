@@ -1,3 +1,2 @@
-import "definitions/replies.stg"
 import "definitions/requests.stg"
 import "definitions/system.stg"

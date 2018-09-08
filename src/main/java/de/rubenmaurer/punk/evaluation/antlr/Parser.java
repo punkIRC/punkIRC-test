@@ -3,7 +3,6 @@ package de.rubenmaurer.punk.evaluation.antlr;
 import de.rubenmaurer.punk.IRCLexer;
 import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.core.facade.Client;
-import de.rubenmaurer.punk.core.util.Log;
 import de.rubenmaurer.punk.evaluation.Response;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -20,8 +19,6 @@ public class Parser {
      * @param message the message to parse
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
-        Log.debug(message);
-
         if (!message.equals("")) {
             CharStream stream = CharStreams.fromString(message);
 

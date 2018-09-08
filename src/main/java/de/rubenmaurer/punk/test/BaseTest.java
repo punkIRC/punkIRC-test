@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test;
 
 import de.rubenmaurer.punk.core.facade.Session;
 import de.rubenmaurer.punk.core.junit.PricefieldExtension;
-import de.rubenmaurer.punk.core.util.Settings;
+import de.rubenmaurer.punk.Settings;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 

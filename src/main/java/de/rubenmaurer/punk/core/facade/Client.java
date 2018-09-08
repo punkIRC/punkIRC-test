@@ -4,31 +4,36 @@ import akka.actor.ActorRef;
 import akka.actor.PoisonPill;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-import de.rubenmaurer.punk.core.util.*;
+import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.core.akka.Ask;
+import de.rubenmaurer.punk.util.*;
 import de.rubenmaurer.punk.evaluation.Response;
-import de.rubenmaurer.punk.messages.Template;
+import de.rubenmaurer.punk.util.Template;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Class for representing an irc client.
+ * Represents a single irc client.
  *
  * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
  */
 public class Client {
 
     /**
-     * The nickname
+     * The clients nickname.
      */
     private String nickname;
 
     /**
-     * Get the nickname
+     * Getter for the nickname.
      *
      * @return the nickname
      */
@@ -37,56 +42,56 @@ public class Client {
     }
 
     /**
-     * The Username.
+     * The clients username.
      */
     private String username;
 
     /**
-     * Username string.
+     * Getter for the username.
      *
-     * @return the string
+     * @return the username
      */
     public String username() {
         return username;
     }
 
     /**
-     * The Realname.
+     * The clients fullname.
      */
-    private String realname;
+    private String fullname;
 
     /**
-     * Realname string.
+     * Getter for the fullname.
      *
-     * @return the string
+     * @return the fullname
      */
-    public String realname() {
-        return realname;
+    public String fullname() {
+        return fullname;
     }
 
     /**
-     * The Last lines.
+     * The last received lines.
      */
     private String[] lastLines = new String[] {""};
 
     /**
-     * Last lines string [ ].
+     * Getter for the last received lines.
      *
-     * @return the string [ ]
+     * @return the last lines
      */
     public String[] lastLines() {
         return lastLines;
     }
 
     /**
-     * The Last response.
+     * The last received response.
      */
     private String lastResponse;
 
     /**
-     * Last response string.
+     * Getter for the last response.
      *
-     * @return the string
+     * @return the last response
      */
     public String lastResponse() {
         String[] splitted = lastResponse.split("\r\n");
@@ -94,27 +99,30 @@ public class Client {
     }
 
     /**
-     * The Connection.
+     * The {@link de.rubenmaurer.punk.core.akka.ConnectionHandler} used for
+     * communicate with the irc server.
      */
     private ActorRef connection;
 
     /**
-     * The Connection manager.
+     * The {@link de.rubenmaurer.punk.core.akka.ConnectionManager} used for
+     * creating and retrieving new {@link de.rubenmaurer.punk.core.akka.ConnectionHandler}.
      */
     static ActorRef connectionManager;
 
     /**
-     * Instantiates a new Client.
+     * Create a new {@link Client} and requests a {@link de.rubenmaurer.punk.core.akka.ConnectionHandler}
+     * for the communication with the irc server.
      *
-     * @param nickname the nickname
-     * @param username the username
-     * @param realname the realname
-     * @throws Exception the exception
+     * @param nickname the clients nickname
+     * @param username the clients username
+     * @param fullname the clients fullname
+     * @throws Exception if handler requests fails
      */
-    private Client(String nickname, String username, String realname) throws Exception {
+    private Client(String nickname, String username, String fullname) throws Exception {
         this.nickname = nickname;
         this.username = username;
-        this.realname = realname;
+        this.fullname = fullname;
 
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
@@ -122,7 +130,8 @@ public class Client {
     }
 
     /**
-     * Tries to connect to the irc server.
+     * Tries to establish an connection to the irc-server.
+     * Establishing an connection does not mean the client is auth. at the server.
      *
      * @return connection established?
      */
@@ -140,16 +149,33 @@ public class Client {
         return connected;
     }
 
-    public void authenticate() throws Exception {
-        this.sendAndReceiveAll(ClientUtils.auth(this), Settings.authLines());
+    /**
+     * Authenticate the client.
+     * Sends both nick and user message.
+     */
+    public void authenticate() {
+        this.sendAndReceiveAll(Utilities.auth(this), Settings.authLines());
     }
 
-    public void authenticateAndJoin(String channel) throws Exception {
+    /**
+     * Authenticate the client and let it join a channel.
+     * Sends a nick, a user and a join message.
+     *
+     * @param channel the channel to join
+     */
+    public void authenticateAndJoin(String channel) {
         authenticate();
 
-        sendAndReceive(ClientUtils.joinChannel(channel));
+        sendAndReceive(Utilities.joinChannel(channel));
     }
 
+    /**
+     * Retrieves a list of server replies with a specific response code.
+     * If no responses matching the given code are found an empty list is returned.
+     *
+     * @param code the code to search for
+     * @return the list of responses
+     */
     public LinkedList<String> log(int code) {
         String result = null;
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
@@ -158,7 +184,7 @@ public class Client {
         try {
             result = (String) Await.result(future, timeout.duration());
         } catch (Exception e) {
-            Log.debug(e.getMessage());
+            Terminal.debugErro(e.getMessage());
         }
 
         if (result != null) {
@@ -168,21 +194,29 @@ public class Client {
         return new LinkedList<>();
     }
 
+    /**
+     * Retrieves a list of server replies with a specific response code.
+     * If no responses matching the given code are found an empty list is returned.
+     *
+     * @param response the {@link Response} which code is used
+     * @return the list of responses
+     */
     public LinkedList<String> log(Response response) {
         return log(response.value);
     }
 
     /**
-     * Disconnect the client from the server.
+     * Terminates the {@link de.rubenmaurer.punk.core.akka.ConnectionHandler} used for
+     * communication with the irc server.
      */
     public void disconnect() {
         this.connection.tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
 
     /**
-     * Is client connected with the server?
+     * Is a connection with the irc server established?
      *
-     * @return is connected?
+     * @return connection established?
      */
     public boolean isConnected() {
         boolean result = false;
@@ -193,76 +227,48 @@ public class Client {
         try {
             result = (Boolean) Await.result(future, timeout.duration());
         } catch (Exception e) {
-            if (Settings.debug()) {
-                System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
-            }
+            Terminal.debugErro(e.getMessage());
         }
 
         return result;
     }
 
     /**
-     * Send a message and receives an answer.
+     * Send a message to the irc server and wait for an answer.
      *
-     * @param message the message
+     * @param message the message to send
      * @return the response
-     * @throws Exception the exception
      */
-    public String[] sendAndReceive(String message) throws Exception {
+    public String[] sendAndReceive(String message) {
         return sendAndReceive(message, Settings.expectedLines());
     }
 
     /**
-     * Send a message and receives an answer.
+     * Send a message to the irc server and wait for an answer.
      *
-     * @param message       the message
-     * @param expectedLines the expected lines
+     * @param message the message to send
+     * @param expectedLines the expected response lines
      * @return the response
-     * @throws Exception the exception
      */
-    public String[] sendAndReceive(String message, int expectedLines) throws Exception {
+    public String[] sendAndReceive(String message, int expectedLines) {
         return sendAndReceive(message, expectedLines, true);
     }
 
     /**
-     * Send a message and receives an answer.
+     * Send a message to the irc server and wait for an answer.
      *
-     * @param message       the message
-     * @param expectedLines the expected lines
+     * @param message the message to send
+     * @param expectedLines the expected response lines
+     * @param sendLast on error send last received lines?
      * @return the response
-     * @throws Exception the exception
      */
-    public String[] sendAndReceive(String message, int expectedLines, int maxLines) throws Exception {
-        return sendAndReceive(message, expectedLines, maxLines, true);
-    }
-
-    /**
-     * Send a message and receives an answer.
-     *
-     * @param message       the message
-     * @param expectedLines the expected lines
-     * @return the response
-     * @throws Exception the exception
-     */
-    public String[] sendAndReceive(String message, int expectedLines, boolean sendLast) throws Exception {
-        return sendAndReceive(message, expectedLines, expectedLines, sendLast);
-    }
-
-    /**
-     * Send a message and receives an answer.
-     *
-     * @param message       the message
-     * @param expectedLines the expected lines
-     * @return the response
-     * @throws Exception the exception
-     */
-    public String[] sendAndReceive(String message, int expectedLines, int maxLines, boolean sendLast) throws Exception {
+    public String[] sendAndReceive(String message, int expectedLines, boolean sendLast) {
         if (!isConnected()) connect();
         lastLines = new String[]{ "" };
 
         if (isConnected()) {
             Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-            Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines, maxLines), timeout);
+            Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines), timeout);
 
             try {
                 lastResponse = (String) Await.result(future, timeout.duration());
@@ -272,10 +278,15 @@ public class Client {
                     Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
                     Future<Object> f = Patterns.ask(connection, "last", timeout);
 
-                    lastResponse = (String) Await.result(f, t.duration());
-                    lastLines = lastResponse.split(Settings.delimiter());
+                    try {
+                        lastResponse = (String) Await.result(f, t.duration());
+                        lastLines = lastResponse.split(Settings.delimiter());
+                    } catch (Exception e) {
+                        Terminal.debugErro(e.getMessage());
+                        Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
+                    }
 
-                    Log.debug(exception.getMessage());
+                    Terminal.debugErro(exception.getMessage());
                     Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
                 }
             }
@@ -287,32 +298,19 @@ public class Client {
     }
 
     /**
-     * Send a list of messages and receives an answer.
+     * Send a list of messages to the irc server and wait for an answer.
      *
-     * @param messages      the messages
-     * @param expectedLines the expected lines
+     * @param messages the message to send
+     * @param expectedLines the expected response lines
      * @return the response
-     * @throws Exception the exception
      */
-    public String[] sendAndReceiveAll(List<String> messages, int expectedLines) throws Exception {
-        return sendAndReceiveAll(messages, expectedLines, expectedLines);
-    }
-
-    /**
-     * Send a list of messages and receives an answer.
-     *
-     * @param messages      the messages
-     * @param expectedLines the expected lines
-     * @return the response
-     * @throws Exception the exception
-     */
-    public String[] sendAndReceiveAll(List<String> messages, int expectedLines, int maxLines) throws Exception {
+    public String[] sendAndReceiveAll(List<String> messages, int expectedLines) {
         int index = 1;
         int lineCount = 0;
 
         for (String messsage : messages) {
             if (index == messages.size()) lineCount = expectedLines;
-            sendAndReceive(messsage, lineCount, maxLines);
+            sendAndReceive(messsage, lineCount);
             index++;
         }
 
@@ -320,27 +318,20 @@ public class Client {
     }
 
     /**
-     * Send a message.
+     * Send a message to the irc server.
      *
-     * @param message the message
-     * @throws Exception the exception
+     * @param message the message to send
      */
-    public void send(String message) throws Exception {
+    public void send(String message) {
         sendAndReceive(message, 0);
     }
 
     /**
-     * Send a list of messages.
+     * Retrieves the last lines received by the irc server.
+     * The last received lines are cleared before each new message.
      *
-     * @param messages the messages
-     * @throws Exception the exception
+     * @return the last received lines
      */
-    public void sendAll(List<String> messages) throws Exception {
-        for (String message : messages) {
-            send(message);
-        }
-    }
-
     public String last() {
         Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> f = Patterns.ask(connection, "last", t);
@@ -356,6 +347,12 @@ public class Client {
         return "";
     }
 
+    /**
+     * Retrieves the last response which is stored inside the 'trash'.
+     * 'Trashed' messages are messages that have not been requested
+     *
+     * @return the last trash line
+     */
     public String trash() {
         Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> f = Patterns.ask(connection, "trash", t);
@@ -371,16 +368,12 @@ public class Client {
         return "";
     }
 
-    private void idle(int time) throws Exception {
-        Thread.sleep(time * 1000);
-    }
-
     /**
      * Create a new client.
      *
      * @param nickname the nickname
      * @param username the username
-     * @param realname the realname
+     * @param realname the fullname
      * @return the client
      * @throws Exception the exception
      */
@@ -396,9 +389,17 @@ public class Client {
      * @throws Exception the exception
      */
     public static Client create(Preset preset) throws Exception {
-        return new Client(preset.nickname(), preset.username(), preset.realname());
+        return new Client(preset.nickname(), preset.username(), preset.fullname());
     }
 
+    /**
+     * Represents a {@link Client} preset.
+     * Is used for easily creating a new client.
+     *
+     * @author Ruben Maurer
+     * @version 1.0
+     * @since 1.0
+     */
     public enum Preset {
         SCHROTTY ("schrotty", "schrottler", "Rodolf Schrottler"),
         MAX ("max", "maxine", "Maxine Caulfield"),
@@ -412,28 +413,236 @@ public class Client {
         JOYCE ("joyce", "queenofkings", "Joyce Price"),
         KATE ("kate", "bunnymommy", "Kate Marsh");
 
+        /**
+         * The clients nickname.
+         */
         private String nickname;
 
+        /**
+         * Getter for the clients nickname.
+         *
+         * @return the nickname
+         */
         public String nickname() {
             return nickname;
         }
 
+        /**
+         * The clients username.
+         */
         private String username;
 
+        /**
+         * Getter for the clients username.
+         *
+         * @return the username
+         */
         public String username() {
             return username;
         }
 
-        private String realname;
+        /**
+         * The clients fullname.
+         */
+        private String fullname;
 
-        public String realname() {
-            return realname;
+        /**
+         * Getter for the clients fullname.
+         *
+         * @return the fullname
+         */
+        public String fullname() {
+            return fullname;
         }
 
-        Preset(String nickname, String username, String realname) {
+        /**
+         * Constructor for a new {@link Preset}.
+         *
+         * @param nickname the clients nickname
+         * @param username the clients username
+         * @param fullname the clients fullname
+         */
+        Preset(String nickname, String username, String fullname) {
             this.nickname = nickname;
-            this.realname = realname;
+            this.fullname = fullname;
             this.username = username;
+        }
+    }
+
+    /**
+     * Utilities for easy {@link Template} access.
+     *
+     * @author Ruben Maurer
+     * @version 1.0
+     * @since 1.0
+     */
+    public static class Utilities {
+
+        /**
+         * Get a NICK message for a client.
+         *
+         * @param client the client
+         * @return the NICK message
+         */
+        public static String nick(Client client) {
+            return Template.get("nick").single("nickname", client.nickname()).render();
+        }
+
+        /**
+         * Get a USER message for a client.
+         *
+         * @param client the client
+         * @return the USER message
+         */
+        public static String user(Client client) {
+            return Template.get("user")
+                    .single("username", client.username())
+                    .single("fullname", client.fullname()).render();
+        }
+
+        /**
+         * Get a list with a NICK and a USER message for a client.
+         *
+         * @param client the client
+         * @return the list with the messages
+         */
+        public static List<String> auth(Client client) {
+            List<String> lst = new ArrayList<>();
+            lst.add(user(client));
+            lst.add(nick(client));
+
+            return lst;
+        }
+
+        /**
+         * Get a PRIVMSG message addressed to a given target and with given message.
+         *
+         * @param target the target
+         * @param message the message
+         * @return the PRIVMSG message
+         */
+        public static String privateMessage(Client target, String message) {
+            return Template.get("privmsg")
+                    .single("nickname", target.nickname())
+                    .single("message", message).render();
+        }
+
+        /**
+         * Get a PRIVMSG message addressed to a channel and with given message.
+         *
+         * @param channel the channel
+         * @param message the message
+         * @return the PRIVMSG message
+         */
+        public static String privateMessage(String channel, String message) {
+            return Template.get("privmsgchannel")
+                    .single("channel", channel)
+                    .single("message", message).render();
+        }
+
+        /**
+         * Get a NOTICE message addressed to a given target and with given message.
+         *
+         * @param target the target
+         * @param message the message
+         * @return the NOTICE message
+         */
+        public static String notice(String target, String message) {
+            return Template.get("notice")
+                    .single("nickname", target)
+                    .single("message", message).render();
+        }
+
+        /**
+         * Get a NOTICE message addressed to a given target and with given message.
+         *
+         * @param target the target
+         * @param message the message
+         * @return the NOTICE message
+         */
+        public static String notice(Client target, String message) {
+            return notice(target.nickname(), message);
+        }
+
+        /**
+         * Get a QUIT message with a message.
+         *
+         * @param message the message
+         * @return the QUIT message
+         */
+        public static String quit(String message) {
+            return Template.get("quit").single("message", message).render();
+        }
+
+        /**
+         * Get a JOIN message to join a channel.
+         *
+         * @param channel the channel
+         * @return the JOIN message
+         */
+        public static String joinChannel(String channel) {
+            return Template.get("join").single("channel", channel).render();
+        }
+
+        /**
+         * Get a WHOIS message for a client.
+         *
+         * @param user the nickname
+         * @return the WHOIS message
+         */
+        public static String whoIs(String user) {
+            return Template.get("whois").single("nickname", user).render();
+        }
+
+        /**
+         * Get a PART message for a channel and with a message.
+         *
+         * @param channel the channel
+         * @param message the message
+         * @return the PART message
+         */
+        public static String part(String channel, String message) {
+            return Template.get("part").single("channel", channel).single("message", message).render();
+        }
+
+        /**
+         * Get a TOPIC message for setting the topic of a channel.
+         *
+         * @param channel the channel
+         * @param topic the new channel topic
+         * @return the TOPIC message
+         */
+        public static String setTopic(String channel, String topic) {
+            return Template.get("topic_set").single("channel", channel).single("topic", topic).render();
+        }
+
+        /**
+         * Get a TOPIC message for getting the current topic of a channel.
+         *
+         * @param channel the channel
+         * @return the TOPIC message
+         */
+        public static String getTopic(String channel) {
+            return Template.get("topic_get").single("channel", channel).render();
+        }
+
+        /**
+         * Get a LIST message.
+         *
+         * @return the LIST message
+         */
+        public static String list() {
+            return "LIST";
+        }
+
+        /**
+         * Get a LIST message for a channel.
+         *
+         * @param channel the channel
+         * @return the LIST message
+         */
+        public static String list(String channel) {
+            return String.format("%s #%s", list(), channel);
         }
     }
 }

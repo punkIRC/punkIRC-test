@@ -2,7 +2,7 @@ package de.rubenmaurer.punk.test.connection;
 
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.core.facade.Session;
-import de.rubenmaurer.punk.core.util.ClientUtils;
+import de.rubenmaurer.punk.core.facade.Client.Utilities;
 import de.rubenmaurer.punk.evaluation.Evaluation;
 import de.rubenmaurer.punk.test.BaseTest;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class MultiUserConnection extends BaseTest {
 
         if (Session.serverIsAlive()) {
             c1.authenticate();
-            c2.sendAndReceiveAll(ClientUtils.auth(c2), 1);
+            c2.sendAndReceiveAll(Utilities.auth(c2), 1);
         }
 
         Evaluation.welcome(c1);

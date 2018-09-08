@@ -1,9 +1,9 @@
 package de.rubenmaurer.punk.core.facade;
 
 import de.rubenmaurer.punk.Pricefield;
-import de.rubenmaurer.punk.core.util.Settings;
-import de.rubenmaurer.punk.core.util.Terminal;
-import de.rubenmaurer.punk.messages.Template;
+import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.util.Terminal;
+import de.rubenmaurer.punk.util.Template;
 
 import java.io.File;
 import java.io.IOException;

@@ -144,6 +144,15 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <show>public</show>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -202,6 +211,12 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-http_2.12</artifactId>
+            <version>10.1.5</version>
         </dependency>
     </dependencies>
 </project>

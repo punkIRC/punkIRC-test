@@ -1,22 +1,9 @@
-package de.rubenmaurer.punk.core.util;
+package de.rubenmaurer.punk;
 
-import de.rubenmaurer.punk.Pricefield;
-import de.rubenmaurer.punk.test.channel.*;
-import de.rubenmaurer.punk.test.connection.BasicConnection;
-import de.rubenmaurer.punk.test.connection.FullConnection;
-import de.rubenmaurer.punk.test.connection.MultiUserConnection;
-import de.rubenmaurer.punk.test.connection.QuitConnection;
-import de.rubenmaurer.punk.test.motd.Motd;
-import de.rubenmaurer.punk.test.ping.Ping;
-import de.rubenmaurer.punk.test.ping.Pong;
-import de.rubenmaurer.punk.test.privmsg.NoticePrivmsg;
-import de.rubenmaurer.punk.test.robustness.Robustness;
-import de.rubenmaurer.punk.test.whois.Whois;
-import de.rubenmaurer.punk.test.unknown.Unknown;
+import de.rubenmaurer.punk.util.Template;
+import de.rubenmaurer.punk.util.Terminal;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
 public class Settings {
@@ -28,6 +15,8 @@ public class Settings {
     private static Settings self = new Settings();
 
     private static Map<String, String> overrides = new HashMap<>();
+
+    private static List<Class> tests = new LinkedList<>();
 
     private Settings() {
         String props = "resources/config.properties";
@@ -50,12 +39,54 @@ public class Settings {
         }
     }
 
+    public static void storeTests(List<Class> tests) {
+        Settings.tests.addAll(tests);
+    }
+
+    public static String generateID() {
+        Pricefield.ID = String.valueOf(System.nanoTime()).substring(0, 5);
+
+        return Pricefield.ID;
+    }
+
+    private static String path() {
+        return new File(ClassLoader.getSystemClassLoader().getResource(".").getPath()).getAbsolutePath();
+    }
+
+    static void checkDirectoriesAndPipe() {
+        try {
+            File logDir = new File(String.format("%s", Settings.logs()));
+            File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.ID));
+
+            if (!logDir.exists()) {
+                if (!logDir.mkdir()) {
+                    throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
+                }
+            }
+
+            if (!testDir.exists()) {
+                if (!testDir.mkdir()) {
+                    throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
+                }
+            }
+
+            System.setErr(new PrintStream(new FileOutputStream(
+                    new File(String.format("%s/%s/pricefield.log", Settings.logs(), Pricefield.ID)))));
+
+        } catch(IOException e) {
+            Terminal.printError(e.getMessage());
+
+            System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+            System.exit(-1);
+        }
+    }
+
     private static String loadOverride(String key) {
         return overrides.getOrDefault(key, "none");
     }
 
-    public static String storeOverride(String key, String value) {
-        return overrides.put(key, value);
+    public static void storeOverride(String key, String value) {
+        overrides.put(key, value);
     }
 
     public static String version() {
@@ -71,11 +102,11 @@ public class Settings {
     }
 
     public static String logs() {
-        return self.internal.getProperty("logs");
+        return String.format("%s/%s", path(), self.internal.getProperty("logs"));
     }
 
     public static String results() {
-        return self.internal.getProperty("results");
+        return String.format("%s/%s", path(), self.internal.getProperty("results"));
     }
 
     public static String executable() {
@@ -84,7 +115,7 @@ public class Settings {
             return ovr;
         }
 
-        return self.properties.getProperty("executable");
+        return String.format("%s/%s", path(), self.properties.getProperty("executable"));
     }
 
     public static String hostname() {
@@ -113,53 +144,7 @@ public class Settings {
     }
 
     public static List<Class> tests() {
-        List<Class> classes = new LinkedList<>();
-
-        for (String cls : loadOverride("tests").split(" ")) {
-            if (cls.equals("Channel")) {
-                classes.add(AssigmentChannel.class);
-                classes.add(JoinChannel.class);
-                classes.add(ListChannel.class);
-                classes.add(PartChannel.class);
-                classes.add(PrivateMessageChannel.class);
-                classes.add(TopicChannel.class);
-                classes.add(WhoChannel.class);
-            }
-
-            if (cls.equals("Connection")) {
-                classes.add(BasicConnection.class);
-                classes.add(FullConnection.class);
-                classes.add(MultiUserConnection.class);
-                classes.add(QuitConnection.class);
-            }
-
-            if (cls.equals("MOTD")) {
-                classes.add(Motd.class);
-            }
-
-            if (cls.equals("Ping")) {
-                classes.add(Ping.class);
-                classes.add(Pong.class);
-            }
-
-            if (cls.equals("PrivateMsg")) {
-                classes.add(NoticePrivmsg.class);
-            }
-
-            if (cls.equals("Robustness")) {
-                classes.add(Robustness.class);
-            }
-
-            if (cls.equals("Unknown")) {
-                classes.add(Unknown.class);
-            }
-
-            if (cls.equals("WhoIs")) {
-                classes.add(Whois.class);
-            }
-        }
-
-        return classes;
+        return tests;
     }
 
     public static boolean java() {
@@ -194,10 +179,6 @@ public class Settings {
 
     public static int startDelay() {
         return Integer.parseInt(self.properties.getProperty("startDelay"));
-    }
-
-    public static int testDelay() {
-        return Integer.parseInt(self.properties.getProperty("testDelay"));
     }
 
     public static boolean debug() {

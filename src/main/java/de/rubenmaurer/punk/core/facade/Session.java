@@ -4,7 +4,7 @@ import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import de.rubenmaurer.punk.core.akka.ConnectionManager;
-import de.rubenmaurer.punk.messages.Template;
+import de.rubenmaurer.punk.util.Template;
 
 /**
  * Class for representing a test session.

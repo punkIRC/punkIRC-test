@@ -6,7 +6,7 @@ import akka.actor.Props;
 import akka.io.Tcp;
 import akka.io.TcpMessage;
 import akka.util.ByteString;
-import de.rubenmaurer.punk.core.util.Ask;
+import de.rubenmaurer.punk.util.Terminal;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
  * Class for handling the connection to the irc server.
  *
  * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
  */
 public class ConnectionHandler extends AbstractActor {
 
@@ -50,8 +52,6 @@ public class ConnectionHandler extends AbstractActor {
      */
     private String response = "";
 
-    private LinkedList<String> journal;
-
     /**
      * Received 'trash'.
      */
@@ -62,6 +62,9 @@ public class ConnectionHandler extends AbstractActor {
      */
     private boolean trashing = true;
 
+    /**
+     * Map for storing every received message which includes a status code.
+     */
     private Map<Integer, LinkedList<String>> log;
 
     /**
@@ -75,7 +78,6 @@ public class ConnectionHandler extends AbstractActor {
         this.manager = Tcp.get(getContext().getSystem()).getManager();
         this.trash = new LinkedList<>();
         this.log = new HashMap<>();
-        this.journal = new LinkedList<>();
     }
 
     /**
@@ -105,14 +107,6 @@ public class ConnectionHandler extends AbstractActor {
         return -1;
     }
 
-    private String formatJournal() {
-        StringBuilder sb = new StringBuilder();
-
-        journal.forEach(s -> sb.append(String.format("%s;", s)));
-
-        return sb.toString();
-    }
-
     /**
      * Handles incoming messages.
      *
@@ -131,7 +125,6 @@ public class ConnectionHandler extends AbstractActor {
                 .matchEquals("connected", s -> getSender().tell(remoteActor != null, self()))
                 .matchEquals("last", s -> getSender().tell(response, self()))
                 .matchEquals("trash", s -> getSender().tell(trash.getLast(), self()))
-                .matchEquals("journal", s -> getSender().tell(formatJournal(), self()))
                 .match(Tcp.Connected.class, s -> {
                     getSender().tell(TcpMessage.register(getSelf()), getSelf());
                     this.remoteActor = getSender();
@@ -144,6 +137,7 @@ public class ConnectionHandler extends AbstractActor {
                     }
 
                     this.remoteActor.tell(TcpMessage.write(ByteString.fromString(msg.intern() + '\r' + '\n')), sender());
+                    Terminal.debugSend(msg);
                 })
                 .match(Integer.class, code -> {
                     List<String> l = log.getOrDefault(code, new LinkedList<>());
@@ -169,7 +163,7 @@ public class ConnectionHandler extends AbstractActor {
                             log.get(code).add(split);
                         }
 
-                        journal.add(split);
+                        Terminal.debugRecv(split);
                     }
 
                     if (!trashing) {
