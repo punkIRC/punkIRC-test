@@ -72,7 +72,6 @@
                             <target>
                                 <echo>Copy config.properties</echo>
                                 <copy file="src/main/resources/config.properties" tofile="${basedir}/target/pricefield/config.properties"/>
-                                <copy file=".chirc/chirc" tofile="${basedir}/target/pricefield/chirc"/>
                             </target>
                         </configuration>
                     </execution>
