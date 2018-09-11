@@ -72,6 +72,7 @@
                             <target>
                                 <echo>Copy config.properties</echo>
                                 <copy file="src/main/resources/config.properties" tofile="${basedir}/target/pricefield/config.properties"/>
+                                <copy file="src/main/resources/version.properties" tofile="${basedir}/target/pricefield/version.properties"/>
                             </target>
                         </configuration>
                     </execution>
