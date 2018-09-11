@@ -12,6 +12,8 @@ public class Settings {
 
     private Properties internal = new Properties();
 
+    private Properties version = new Properties();
+
     private static Settings self = new Settings();
 
     private static Map<String, String> overrides = new HashMap<>();
@@ -20,7 +22,8 @@ public class Settings {
 
     private Settings() {
         String props = "resources/config.properties";
-        String inter = "resources/build.properties";
+        String inter = "resources/system.properties";
+        String versi = "resources/version.properties";
 
         File f = new File("./config.properties");
 
@@ -34,6 +37,12 @@ public class Settings {
 
         try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(inter)) {
             internal.load(input);
+        } catch (IOException e) {
+            Terminal.printError(e.getMessage());
+        }
+
+        try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(versi)) {
+            version.load(input);
         } catch (IOException e) {
             Terminal.printError(e.getMessage());
         }
@@ -90,11 +99,11 @@ public class Settings {
     }
 
     public static String version() {
-        return self.internal.getProperty("version", "1.0");
+        return self.version.getProperty("version", "1.0");
     }
 
     public static String build() {
-        return self.internal.getProperty("buildNumber", "501");
+        return self.version.getProperty("build", "501");
     }
 
     public static String delimiter() {
