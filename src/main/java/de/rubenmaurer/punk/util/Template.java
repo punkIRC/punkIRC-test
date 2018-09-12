@@ -52,6 +52,12 @@ public class Template {
         return new Template(templates.getInstanceOf(template));
     }
 
+    /**
+     * Get a 'RECV' log message.
+     *
+     * @param message the message
+     * @return the log messaage
+     */
     static String recv(String message) {
         return Template.get("DEBUG")
                 .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
@@ -59,6 +65,12 @@ public class Template {
                 .single("message", message).render();
     }
 
+    /**
+     * Get a 'SEND' log message.
+     *
+     * @param message the message
+     * @return the log messaage
+     */
     static String send(String message) {
         return Template.get("DEBUG")
                 .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
@@ -66,6 +78,12 @@ public class Template {
                 .single("message", message).render();
     }
 
+    /**
+     * Get an 'ERROR' log message.
+     *
+     * @param message the message
+     * @return the log messaage
+     */
     static String erro(String message) {
         return Template.get("DEBUG")
                 .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
@@ -82,23 +100,6 @@ public class Template {
      */
     public Template single(String key, String value) {
         template.add(key, value);
-        return this;
-    }
-
-    /**
-     * Fill a single var in loaded template.
-     *
-     * @param key the key
-     * @param values the values
-     * @return the rendered template
-     */
-    Template single(String key, String[] values) {
-        StringBuilder sb = new StringBuilder();
-        for (String value : values) {
-            sb.append(String.format("%s;", value));
-        }
-
-        template.add(key, sb.toString());
         return this;
     }
 
