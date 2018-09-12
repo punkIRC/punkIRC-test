@@ -17,8 +17,20 @@ import de.rubenmaurer.punk.test.whois.Whois;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class for all the command line things.
+ *
+ * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
+ */
 public class CLI {
 
+    /**
+     * Parses the program parameter.
+     *
+     * @param parameter the parameter
+     */
     public static void parseParameter(String[] parameter) {
         for (String arg : parameter) {
             String[] argument = arg.split("=");
@@ -56,6 +68,12 @@ public class CLI {
         }
     }
 
+    /**
+     * Saves the tests to execute.
+     *
+     * @param tests string with all test classes
+     * @return the list of tests to execute
+     */
     private static List<Class> storeTests(String tests) {
         List<Class> classes = new LinkedList<>();
 
