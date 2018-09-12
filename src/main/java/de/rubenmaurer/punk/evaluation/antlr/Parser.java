@@ -8,15 +8,25 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * Parser for incoming messages from the irc server.
+ *
+ * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
+ */
 public class Parser {
 
     /**
-     * Parse a message.
+     * Parse a single message.
      *
+     * @param sender the ${@link Client} which the message send
+     * @param receiver the ${@link Client} which the message received
+     * @param code the expected ${@link Response}
      * @param message the message to parse
+     * @param values collection of values needed for the evaluation
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
         if (!message.equals("")) {
@@ -37,19 +47,38 @@ public class Parser {
         }
     }
 
+    /**
+     * Parse a single message.
+     *
+     * @param sender the ${@link Client} which the message send
+     * @param response the expected ${@link Response}
+     * @param message the message to parse
+     */
     public static void parse(Client sender, Response response, String message) {
         parse(sender, sender, response, message, new HashMap<>());
     }
 
+    /**
+     * Parse a single message.
+     *
+     * @param sender the ${@link Client} which the message send
+     * @param target the ${@link Client} which the message targeted
+     * @param response the expected ${@link Response}
+     * @param message the message to parse
+     */
     public static void parse(Client sender, Client target, Response response, String message) {
         parse(sender, target, response, message, new HashMap<>());
     }
 
+    /**
+     * Parse a single message.
+     *
+     * @param sender the ${@link Client} which the message send
+     * @param response the expected ${@link Response}
+     * @param message the message to parse
+     * @param values collection of values needed for the evaluation
+     */
     public static void parse(Client sender, Response response, String message, HashMap<String, String> values) {
         parse(sender, sender, response, message, values);
-    }
-
-    public static void parse(Client sender, Response response, LinkedList<String> messages, HashMap<String, String> values) {
-        messages.forEach(s -> parse(sender, response, s, values));
     }
 }
