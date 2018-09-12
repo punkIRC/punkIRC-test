@@ -1,5 +1,12 @@
 package de.rubenmaurer.punk.evaluation;
 
+/**
+ * Enum with all needed response codes.
+ *
+ * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
+ */
 public enum Response {
     NONE (0),
     WELCOME (001),
@@ -32,8 +39,16 @@ public enum Response {
     NICKNAME_IN_USE (433),
     NOT_ON_CHANNEL (442);
 
+    /**
+     * The response code.
+     */
     public final int value;
 
+    /**
+     * Create a new response.
+     *
+     * @param code the response code
+     */
     Response(int code) {
         value = code;
     }
