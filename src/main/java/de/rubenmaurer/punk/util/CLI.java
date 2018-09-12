@@ -1,6 +1,5 @@
 package de.rubenmaurer.punk.util;
 
-import de.rubenmaurer.punk.Pricefield;
 import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.test.channel.*;
 import de.rubenmaurer.punk.test.connection.BasicConnection;
@@ -15,12 +14,8 @@ import de.rubenmaurer.punk.test.robustness.Robustness;
 import de.rubenmaurer.punk.test.unknown.Unknown;
 import de.rubenmaurer.punk.test.whois.Whois;
 
-import java.io.*;
-import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.fusesource.jansi.Ansi.ansi;
 
 public class CLI {
 

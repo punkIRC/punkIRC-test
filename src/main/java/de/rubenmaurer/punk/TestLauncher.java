@@ -15,7 +15,18 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Launcher for the irc tests.
+ *
+ * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
+ */
 class TestLauncher {
+
+    /**
+     * Launches the irc tests.
+     */
     static void launch() {
         List<DiscoverySelector> selectors = new LinkedList<>();
 
