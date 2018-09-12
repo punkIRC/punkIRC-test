@@ -109,4 +109,6 @@ buildNumber.properties
 
 # End of https://www.gitignore.io/api/java,maven,intellij+all
 /.chirc/
+/.settings/
 /results/
+/logs/
