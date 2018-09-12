@@ -13,16 +13,36 @@ import java.util.Map;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
+/**
+ * Listener for the test execution.
+ *
+ * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
+ */
 public class PricefieldUnitListener implements TestExecutionListener {
 
+    /**
+     * The title of the current running test.
+     */
     private String display;
 
+    /**
+     * Collection of all tests with their status.
+     */
     public static Map<TestExecutionResult.Status, List<String>> testResults = new HashMap<>();
 
+    /**
+     * Count variables.
+     */
     private int testCount, success, failed, aborted;
 
-    private int maxTestCount, maxSuccess, maxFailed, maxAborted;
-
+    /**
+     * Is called when a test execution is started.
+     * Displays the name and status of the now running test.
+     *
+     * @param testIdentifier the test which is running
+     */
     public void executionStarted(TestIdentifier testIdentifier) {
         display = testIdentifier.getDisplayName();
         if(!display.contains("JUnit")) {
@@ -33,7 +53,6 @@ public class PricefieldUnitListener implements TestExecutionListener {
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(status))))));
 
                 testCount++;
-                maxTestCount++;
                 return;
             }
 
@@ -47,6 +66,14 @@ public class PricefieldUnitListener implements TestExecutionListener {
         }
     }
 
+    /**
+     * Is called when a test execution is finished.
+     * Update the test status and when test class is finished, displays a
+     * summary.
+     *
+     * @param testIdentifier the executed test
+     * @param testExecutionResult test result of the executed test
+     */
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         if (!testIdentifier.getDisplayName().contains("JUnit")) {
             if (!testIdentifier.isContainer()) {
@@ -57,19 +84,16 @@ public class PricefieldUnitListener implements TestExecutionListener {
                     result = ansi().fgRed().render(status.name()).fgDefault().toString();
                     if (status.equals(TestExecutionResult.Status.ABORTED)) {
                         aborted++;
-                        maxAborted++;
                     }
 
                     if (status.equals(TestExecutionResult.Status.FAILED)) {
                         failed++;
-                        maxFailed++;
                     }
                 }
 
                 if (status.equals(TestExecutionResult.Status.SUCCESSFUL)) {
                     result = ansi().fgGreen().render(status.name()).fgDefault().toString();
                     success++;
-                    maxSuccess++;
                 }
 
                 System.out.println(ansi().restoreCursorPosition().eraseLine(Ansi.Erase.ALL)

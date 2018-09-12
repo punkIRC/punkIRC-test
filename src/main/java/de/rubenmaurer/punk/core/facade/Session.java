@@ -7,9 +7,11 @@ import de.rubenmaurer.punk.core.akka.ConnectionManager;
 import de.rubenmaurer.punk.util.Template;
 
 /**
- * Class for representing a test session.
+ * Representing a single test session.
  *
  * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
  */
 public class Session {
 
@@ -56,7 +58,7 @@ public class Session {
     }
 
     /**
-     * Terminate a session.
+     * Terminate the session.
      */
     public static boolean terminate() {
         Session.initiated = false;

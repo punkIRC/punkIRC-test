@@ -9,9 +9,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Class for representing an irc server.
+ * Class for controlling the irc server.
  *
  * @author Ruben Maurer
+ * @version 1.0
+ * @since 1.0
  */
 public class Server {
 
@@ -31,7 +33,7 @@ public class Server {
     private int shutdownTries = 1;
 
     /**
-     * The constant self.
+     * Server singleton
      */
     private static Server self;
 
@@ -45,9 +47,9 @@ public class Server {
     }
 
     /**
-     * Start boolean.
+     * Tries to start the server and create all needed directories.
      *
-     * @return the boolean
+     * @return server is online?
      */
     static boolean start() {
         if (self != null) {
