@@ -26,7 +26,7 @@ public class ListChannel extends BaseTest {
             c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
-        Evaluation.list(c1, channel, "Burn", 3);
+        Evaluation.list(c1, channel, "", 3);
     }
 
     @Test

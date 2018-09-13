@@ -3,6 +3,7 @@ package de.rubenmaurer.punk.evaluation.antlr;
 import de.rubenmaurer.punk.IRCBaseListener;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Map;
 
@@ -264,8 +265,12 @@ class PricefieldGrammarListener extends IRCBaseListener {
     @Override
     public void enterList(ListContext ctx) {
         stringCheck(ctx.channel().getText(), values.get("channel"));
-        stringCheck(ctx.message().getText(), values.get("topic"));
         intCheck(ctx.INTEGER().getText(), values.get("user"));
+
+        MessageContext mCtx = ctx.message();
+        if (mCtx != null) {
+            stringCheck(mCtx.getText(), values.getOrDefault("topic", null));
+        }
     }
 
     /* === PRIVMSG & NOTICE === */
