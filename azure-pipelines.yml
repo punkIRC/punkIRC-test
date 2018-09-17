@@ -1,5 +1,4 @@
 jobs:
-  name: "punkIRC CI"
 - job: Changelog
   pool:
     vmImage: ubuntu-16.04
