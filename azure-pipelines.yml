@@ -16,7 +16,7 @@ jobs:
     displayName: 'Copy Changelog'
     inputs:
       SourceFolder: '$(System.DefaultWorkingDirectory)'
-      Contents: '*.md'
+      Contents: 'CHANGELOG.md'
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
@@ -29,4 +29,31 @@ jobs:
   pool:
     vmImage: vs2017-win2016
   steps:
-  - script: echo what the heck is going on?!
+  - task: gittools.gitversion.gitversion-task.GitVersion@3
+    displayName: GitVersion
+
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+    displayName: 'Replace tokens in **/*.properties'
+    inputs:
+      targetFiles: '**/*.properties'
+
+  - task: Maven@3
+    displayName: 'Package'
+    inputs:
+      mavenPomFile: 'pom.xml'
+      publishJUnitResults: false
+      goals: 'clean package'
+
+  - task: CopyFiles@2
+    displayName: 'Copy Files'
+    inputs:
+      SourceFolder: '$(system.defaultworkingdirectory)'
+      Contents: 'target/pricefield/*'
+      TargetFolder: '$(build.artifactstagingdirectory)'
+      CleanTargetFolder: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: punkIRC'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: punkIRC
