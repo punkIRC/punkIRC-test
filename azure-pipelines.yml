@@ -1,0 +1,9 @@
+jobs:
+- job: Debug
+  steps:
+  - script: echo hello from the Debug build
+  
+- job: Release
+  dependsOn: Debug
+  steps:
+  - script: echo hello from the Release build
