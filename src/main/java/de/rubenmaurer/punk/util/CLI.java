@@ -52,7 +52,7 @@ public class CLI {
             }
 
             // Deactivate java mode
-            if (command.equals("--java") || command.equals("-j")) {
+            if (command.equals("--noJava") || command.equals("-nj")) {
                 Settings.storeOverride("java", "false");
             }
 
