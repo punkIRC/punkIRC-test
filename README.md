@@ -58,25 +58,25 @@ adjusted by command line parameter.
 ##### Server executable
 ```cmd
 --executable="<server_path>
---e="<server_path>
+-e="<server_path>
 ```
 
 ##### Server port
 ```cmd
 --port="<server_port>
---p="<server_port>
+-p="<server_port>
 ```
 
 ##### Server hostname
 ```cmd
 --host="<server_host>
---h="<server_host>
+-h="<server_host>
 ```
 
 ##### Deactivate java mode
 ```cmd
 --noJava
---nj
+-nj
 ```
 
 ##### Decide which tests to execute
@@ -85,7 +85,7 @@ Without this parameter ```priceIRC``` will do nothing.
 
 ```cmd
 --tests="<test_1> <test_2>"
---t="<test_1> <test_2>"
+-t="<test_1> <test_2>"
 ```
 
 As you can see in the box above, the list with tests is separated by whitespace.
