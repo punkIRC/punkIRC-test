@@ -227,7 +227,12 @@ public class Settings {
      * @return the parameter
      */
     private static String parameter(int id) {
-        return self.properties.getProperty(String.format("parameter_%d", id));
+        String key = String.format("parameter_%d", id);
+        if (self.properties.containsKey(key)) {
+            return self.properties.getProperty(key);
+        }
+
+        return "";
     }
 
     /**
