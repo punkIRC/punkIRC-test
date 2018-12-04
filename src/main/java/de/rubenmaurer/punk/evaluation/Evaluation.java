@@ -1,5 +1,6 @@
 package de.rubenmaurer.punk.evaluation;
 
+import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
@@ -21,6 +22,7 @@ public class Evaluation {
      * @param sender the sender
      */
     public static void ping(Client sender) {
+        Parser.useRule(IRCParser.RULE_pong);
         Parser.parse(sender, Response.NONE, sender.lastResponse());
     }
 
@@ -119,6 +121,7 @@ public class Evaluation {
         map.put("message", message);
         map.put("target", channel ? String.format("#%s", target) : target);
 
+        Parser.useRule(IRCParser.RULE_private_message);
         Parser.parse(sender, receiver, Response.NONE, receiver.trash(), map);
     }
 
@@ -148,6 +151,7 @@ public class Evaluation {
         map.put("message", message);
         map.put("target", channel ? String.format("#%s", target) : target);
 
+        Parser.useRule(IRCParser.RULE_notice);
         Parser.parse(sender, receiver, Response.NONE, receiver.trash(), map);
     }
 
@@ -247,6 +251,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("message", message);
 
+        Parser.useRule(IRCParser.RULE_quit);
         Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
 
         Settings.sleep();
@@ -274,6 +279,7 @@ public class Evaluation {
         values.put("names", sb.toString());
         values.put("channel", String.format("#%s", channel));
 
+        Parser.useRule(IRCParser.RULE_channel);
         Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
         Parser.parse(sender, Response.NAME_RPLY, sender.log(Response.NAME_RPLY).getLast(), values);
         Parser.parse(sender, Response.END_OF_NAMES, sender.log(Response.END_OF_NAMES).getLast(), values);
@@ -361,6 +367,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("channel", String.format("#%s", channel));
 
+        Parser.useRule(IRCParser.RULE_part);
         Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
     }
 
@@ -389,6 +396,7 @@ public class Evaluation {
         values.put("channel", String.format("#%s", channel));
         values.put("topic", topic);
 
+        Parser.useRule(IRCParser.RULE_topic);
         Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
     }
 

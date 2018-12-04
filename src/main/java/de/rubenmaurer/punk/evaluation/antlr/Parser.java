@@ -5,6 +5,7 @@ import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.util.HashMap;
@@ -18,6 +19,24 @@ import java.util.Map;
  * @since 1.0
  */
 public class Parser {
+
+    private static int ruleID;
+
+    public static void useRule(int rule) {
+        ruleID = rule;
+    }
+
+    private static ParseTree tree(IRCParser parser) {
+        if (ruleID == IRCParser.RULE_quit) return parser.quit();
+        if (ruleID == IRCParser.RULE_private_message) return parser.private_message();
+        if (ruleID == IRCParser.RULE_notice) return parser.notice();
+        if (ruleID == IRCParser.RULE_pong) return parser.pong();
+        if (ruleID == IRCParser.RULE_channel) return parser.channel();
+        if (ruleID == IRCParser.RULE_part) return parser.part();
+        if (ruleID == IRCParser.RULE_topic) return parser.topic();
+
+        return parser.response();
+    }
 
     /**
      * Parse a single message.
@@ -43,8 +62,10 @@ public class Parser {
             parser.addErrorListener(PricefieldErrorListener.INSTANCE);
 
             ParseTreeWalker walker = new ParseTreeWalker();
-            walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), parser.response());
+            walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), tree(parser));
         }
+
+        ruleID = -1;
     }
 
     /**
