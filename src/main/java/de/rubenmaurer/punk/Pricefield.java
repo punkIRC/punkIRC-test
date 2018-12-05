@@ -26,6 +26,7 @@ public class Pricefield {
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
 
+        CLI.doVersionCheck();
         CLI.parseParameter(args);
         Terminal.printHeader();
 
