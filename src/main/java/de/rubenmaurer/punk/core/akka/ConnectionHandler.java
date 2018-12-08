@@ -98,10 +98,17 @@ public class ConnectionHandler extends AbstractActor {
         return lines.split("\r\n").length;
     }
 
+    /**
+     * Detect irc codes in strings.
+     *
+     * @param message the message to search
+     * @return the code which was found
+     */
     private int detectCode(String message) {
-        Matcher matcher = Pattern.compile("\\d+").matcher(message);
+        Matcher matcher = Pattern.compile(" \\d{3} ").matcher(message);
         if (matcher.find()) {
-            return Integer.valueOf(matcher.group());
+            String match = matcher.group().trim();
+            return Integer.valueOf(match);
         }
 
         return -1;
