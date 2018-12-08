@@ -1,5 +1,5 @@
 # Project Pricefield
-[![Build status](https://dev.azure.com/rubenmaurer/Project%20Pricefield/_apis/build/status/Pricefield-CI)](https://dev.azure.com/rubenmaurer/Project%20Pricefield/_build/latest?definitionId=3)
+[![Build Status](https://dev.azure.com/rubenmaurer/Project%20Pricefield/_apis/build/status/Pricefield%20CI)](https://dev.azure.com/rubenmaurer/Project%20Pricefield/_build/latest?definitionId=6)
 
 IRC test-application loosely based on the [chirc project](https://github.com/uchicago-cs/chirc).
 
