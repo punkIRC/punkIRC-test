@@ -424,7 +424,11 @@ public class Settings {
      * @return do version check?
      */
     public static boolean versionCheck() {
-        return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+        if (self.properties.containsKey("doVersionCheck")) {
+            return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+        }
+
+        return false;
     }
 
     /**
@@ -432,7 +436,7 @@ public class Settings {
      *
      * @return the updateURL
      */
-    public static String updateURL() {
+    private static String updateURL() {
         return self.internal.getProperty("updateURL");
     }
 
