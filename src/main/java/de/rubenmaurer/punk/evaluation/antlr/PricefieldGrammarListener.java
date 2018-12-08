@@ -3,7 +3,6 @@ package de.rubenmaurer.punk.evaluation.antlr;
 import de.rubenmaurer.punk.IRCBaseListener;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Map;
 
@@ -61,8 +60,8 @@ class PricefieldGrammarListener extends IRCBaseListener {
      * @param expected the expected value
      * @param real the actual value
      */
-    private void codeCheck(String expected, Response real) {
-        intCheck(expected, real.value);
+    private void codeCheck(String real, Response expected) {
+        intCheck(real, expected.value);
     }
 
     /**
@@ -71,8 +70,8 @@ class PricefieldGrammarListener extends IRCBaseListener {
      * @param expected the expected value
      * @param real the actual vaalue
      */
-    private void intCheck(String expected, int real) {
-        intCheck(expected, String.valueOf(real));
+    private void intCheck(String real, int expected) {
+        intCheck(real, String.valueOf(expected));
     }
 
     /**
@@ -81,7 +80,7 @@ class PricefieldGrammarListener extends IRCBaseListener {
      * @param expected the expected value
      * @param real the actual value
      */
-    private void intCheck(String expected, String real) {
+    private void intCheck(String real, String expected) {
         if (Integer.parseInt(expected) != Integer.parseInt(real)) {
             throw new RuntimeException(String.format("Expected: '%s', but got '%s'.", expected, real));
         }
@@ -93,7 +92,7 @@ class PricefieldGrammarListener extends IRCBaseListener {
      * @param expected the expected value
      * @param real the actual value
      */
-    private void stringCheck(String expected, String real) {
+    private void stringCheck(String real, String expected) {
         if (!expected.equals(real)) {
             throw new RuntimeException(String.format("Expected: '%s', but got '%s'.", expected, real));
         }
