@@ -1,11 +1,4 @@
 jobs:
-- job: Changelog
-  pool:
-    vmImage: ubuntu-16.04
-  steps:
-  - task: UseRubyVersion@0
-    displayName: 'Use Ruby >= 2.4'
-
 - job: Build
   dependsOn: Changelog
   pool:
