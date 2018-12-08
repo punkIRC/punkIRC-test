@@ -128,7 +128,7 @@ public class Settings {
 
         try {
             JSONObject jsonObject = new JSONObject(response);
-            version = jsonObject.getString("name");
+            version = jsonObject.getString("tag_name");
         } catch (JSONException ignore) {
             // ignored
         }
