@@ -8,5 +8,8 @@ UNABLE_TO_CREATE_TEST_DIR() ::= "ERROR: Unable to create the test directory!"
 LOG_ERROR(timestamp, message, place) ::= "[<place>@<timestamp>]: <message>"
 TERMINATE_MESSAGE(id) ::= "See 'logs/<id>/pricefield.log' for detailed information."
 
+VERSION_UPDATE_MESSAGE() ::= "New version available!"
+VERSION_UPDATE(old, new) ::= "Your version is '<old>', current version is '<new>'"
+
 //Debugging  log messages
 DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"

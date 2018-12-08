@@ -44,7 +44,7 @@ public class Terminal {
      *
      * @return the divider
      */
-    private static String getDivider() {
+    static String getDivider() {
         return getDivider("=");
     }
 
