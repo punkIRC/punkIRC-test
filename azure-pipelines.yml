@@ -6,6 +6,9 @@ jobs:
   - task: gittools.gitversion.gitversion-task.GitVersion@3
     displayName: GitVersion
 
+  - script: '@echo ##vso[build.updatebuildnumber]$(GitVersion.MajorMinorPatch)'
+    displayName: 'Update BuildNumber'
+
   - task: qetza.replacetokens.replacetokens-task.replacetokens@3
     displayName: 'Replace tokens in **/*.properties'
     inputs:
