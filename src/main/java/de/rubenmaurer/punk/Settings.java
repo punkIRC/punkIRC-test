@@ -2,8 +2,12 @@ package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.util.Template;
 import de.rubenmaurer.punk.util.Terminal;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -74,6 +78,62 @@ public class Settings {
         } catch (IOException e) {
             Terminal.printError(e.getMessage());
         }
+    }
+
+    /**
+     * Fetch the current github release version.
+     *
+     * @return the current version
+     */
+    public static String getCurrentVersion() {
+        StringBuilder content = new StringBuilder();
+        HttpURLConnection connection = null;
+
+        try {
+            URL url = new URL(Settings.updateURL());
+            connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            connection.connect();
+            if (connection.getResponseCode() == 200) {
+                String inputLine;
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+
+                in.close();
+            }
+        } catch (IOException ignore) {
+            // ignored
+        } finally {
+            if (connection != null) connection.disconnect();
+        }
+
+        String version = getVersionFromResponse(content.toString());
+        return version.equals("") ? null : version;
+    }
+
+    /**
+     * Extract the tag version form json-string.
+     *
+     * @param response the json-string
+     * @return the extracted tag version
+     */
+    private static String getVersionFromResponse(String response) {
+        String version = "";
+
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            version = jsonObject.getString("tag_name");
+        } catch (JSONException ignore) {
+            // ignored
+        }
+
+        return version;
     }
 
     /**
@@ -356,6 +416,28 @@ public class Settings {
      */
     public static int authLines() {
         return Integer.parseInt(self.properties.getProperty("authLines"));
+    }
+
+    /**
+     * Get the doVersionCheck value.
+     *
+     * @return do version check?
+     */
+    public static boolean versionCheck() {
+        if (self.properties.containsKey("doVersionCheck")) {
+            return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the URL used for version check.
+     *
+     * @return the updateURL
+     */
+    private static String updateURL() {
+        return self.internal.getProperty("updateURL");
     }
 
     /**

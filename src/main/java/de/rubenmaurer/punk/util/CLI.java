@@ -27,6 +27,28 @@ import java.util.List;
 public class CLI {
 
     /**
+     * Look for a new version available.
+     */
+    public static void doVersionCheck() {
+        String onlineVersion = Settings.getCurrentVersion();
+        if (onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
+            System.out.print(Terminal.getDivider());
+            System.out.print(Terminal.center(Template.get("VERSION_UPDATE_MESSAGE").render()));
+            System.out.print(
+                    Terminal.center(Template.get("VERSION_UPDATE")
+                            .single("old", Settings.version())
+                            .single("new", onlineVersion)
+                            .render()
+                    )
+            );
+
+            System.out.print(Terminal.getDivider());
+
+            System.exit(42);
+        }
+    }
+
+    /**
      * Parses the program parameter.
      *
      * @param parameter the parameter
