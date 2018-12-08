@@ -6,24 +6,6 @@ jobs:
   - task: UseRubyVersion@0
     displayName: 'Use Ruby >= 2.4'
 
-  - bash: |
-      gem install github_changelog_generator
-      github_changelog_generator punkIRC/punkIRC-test
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
-    displayName: 'Install dependencies & generate changelog'
-
-  - task: CopyFiles@2
-    displayName: 'Copy Changelog'
-    inputs:
-      SourceFolder: '$(System.DefaultWorkingDirectory)'
-      Contents: 'CHANGELOG.md'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: Changelog'
-    inputs:
-      ArtifactName: Changelog
-  
 - job: Build
   dependsOn: Changelog
   pool:
