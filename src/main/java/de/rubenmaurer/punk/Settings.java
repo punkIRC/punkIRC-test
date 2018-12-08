@@ -80,6 +80,11 @@ public class Settings {
         }
     }
 
+    /**
+     * Fetch the current github release version.
+     *
+     * @return the current version
+     */
     public static String getCurrentVersion() {
         StringBuilder content = new StringBuilder();
         HttpURLConnection connection = null;
@@ -112,6 +117,12 @@ public class Settings {
         return version.equals("") ? null : version;
     }
 
+    /**
+     * Extract the tag version form json-string.
+     *
+     * @param response the json-string
+     * @return the extracted tag version
+     */
     private static String getVersionFromResponse(String response) {
         String version = "";
 

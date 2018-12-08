@@ -46,7 +46,10 @@ stopDelay=2             # Seconds to wait until your server is fully offline
 
 authLines=10            # The amount of lines your server sent during authentication
                         # A 'perfect' server sends 10 lines during authentication.
-                        # May be removed in future.
+                        
+doVersionCheck=true     # Perform a version check every time the client starts
+                        # If a new version/ release is detected the client stops
+                        # See "Getting Started" where to find new releases
 ```
 
 Most of the values, probably can left untouched.
@@ -91,7 +94,7 @@ Without this parameter ```priceIRC``` will do nothing.
 As you can see in the box above, the list with tests is separated by whitespace.
 A list with all available tests follows.
 
-```cmd
+```
 Channel
 Connection
 MOTD
@@ -101,6 +104,8 @@ Robustness
 Unknown
 WhoIs
 ```
+
+An overview of which tests are to execute for which assignment can found [here](https://github.com/punkIRC/punkIRC-test/blob/master/TestOverview.md).
 
 ### Examples
 
