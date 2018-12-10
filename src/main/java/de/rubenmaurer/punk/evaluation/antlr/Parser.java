@@ -31,11 +31,15 @@ public class Parser {
         if (ruleID == IRCParser.RULE_private_message) return parser.private_message();
         if (ruleID == IRCParser.RULE_notice) return parser.notice();
         if (ruleID == IRCParser.RULE_pong) return parser.pong();
-        if (ruleID == IRCParser.RULE_channel) return parser.channel();
+        if (ruleID == IRCParser.RULE_server_response) return parser.server_response();
         if (ruleID == IRCParser.RULE_part) return parser.part();
         if (ruleID == IRCParser.RULE_topic) return parser.topic();
 
         return parser.response();
+    }
+
+    public static void reset() {
+        ruleID = -1;
     }
 
     /**

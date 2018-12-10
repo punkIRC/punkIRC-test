@@ -3,6 +3,7 @@ package de.rubenmaurer.punk.test;
 import de.rubenmaurer.punk.core.facade.Session;
 import de.rubenmaurer.punk.core.junit.PricefieldExtension;
 import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.evaluation.antlr.Parser;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -25,6 +26,8 @@ public abstract class BaseTest {
 
     @BeforeEach
     void before() {
+        Parser.reset();
+
         assumeTrue(Session.startServer());
     }
 

@@ -82,7 +82,7 @@ public class JoinChannel extends BaseTest {
             Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
         }
 
-        Evaluation.channelRelay(c1, channel);
+        Evaluation.join(c1, channel, c1.nickname(), c2.nickname());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class JoinChannel extends BaseTest {
             Evaluation.join(c3, channel, c1.nickname(), c2.nickname(), c3.nickname());
         }
 
-        Evaluation.channelRelay(c1, channel);
-        Evaluation.channelRelay(c2, channel);
+        Evaluation.join(c1, channel, c1.nickname(), c2.nickname(), c3.nickname());
+        Evaluation.join(c2, channel, c1.nickname(), c2.nickname(), c3.nickname());
     }
 }

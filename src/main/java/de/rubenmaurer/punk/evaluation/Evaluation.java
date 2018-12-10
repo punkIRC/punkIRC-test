@@ -1,10 +1,11 @@
 package de.rubenmaurer.punk.evaluation;
 
 import de.rubenmaurer.punk.IRCParser;
-import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -279,8 +280,9 @@ public class Evaluation {
         values.put("names", sb.toString());
         values.put("channel", String.format("#%s", channel));
 
-        Parser.useRule(IRCParser.RULE_channel);
+        Parser.useRule(IRCParser.RULE_server_response);
         Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
+
         Parser.parse(sender, Response.NAME_RPLY, sender.log(Response.NAME_RPLY).getLast(), values);
         Parser.parse(sender, Response.END_OF_NAMES, sender.log(Response.END_OF_NAMES).getLast(), values);
     }
@@ -301,19 +303,6 @@ public class Evaluation {
         values.put("channel", String.format("#%s", channel));
 
         Parser.parse(sender, Response.TOPIC, sender.log(Response.TOPIC).getLast(), values);
-    }
-
-    /**
-     * Tries to evaluate the last join message.
-     *
-     * @param sender the sender
-     * @param channel the channel
-     */
-    public static void channelRelay(Client sender, String channel) {
-        HashMap<String, String> values = new HashMap<>();
-        values.put("channel", String.format("#%s", channel));
-
-        Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
     }
 
     /**
@@ -367,7 +356,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("channel", String.format("#%s", channel));
 
-        Parser.useRule(IRCParser.RULE_part);
+        Parser.useRule(IRCParser.RULE_server_response);
         Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
     }
 
@@ -483,6 +472,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("message", message);
 
+        System.err.println(Arrays.toString(sender.lastLines()));
         Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
     }
 }
