@@ -22,7 +22,7 @@ server_response_special
     ;
 
 server_response_error
-    : 'ERROR' WHITESPACE DLIMIT
+    : ':'? 'ERROR' WHITESPACE DLIMIT
     ;
 
 message
