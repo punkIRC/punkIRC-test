@@ -14,7 +14,7 @@ server_response_long
     ;
 
 server_response_short
-    : nick '!' user '@' host
+    : nick '!' user '@' server
     ;
 
 server_response_special
@@ -22,7 +22,7 @@ server_response_special
     ;
 
 server_response_error
-    : 'ERROR' WHITESPACE DLIMIT
+    : ':'? 'ERROR' WHITESPACE DLIMIT
     ;
 
 message
@@ -72,10 +72,6 @@ user
 
 fullname
     : (WORD | WHITESPACE)+
-    ;
-
-host
-    : WORD
     ;
 
 channel
@@ -142,7 +138,7 @@ pong
     ;
 
 quit
-    : server_response 'Closing Link' DLIMIT WHITESPACE host WHITESPACE '(' message ')'
+    : server_response 'Closing Link' DLIMIT WHITESPACE server WHITESPACE '(' message ')'
     ;
 
 /* === WELCOME === */
@@ -249,7 +245,7 @@ notice
 /* === WHOIS === */
 
 who_is_user
-    : server_response WHITESPACE nick WHITESPACE user WHITESPACE host WHITESPACE '*' WHITESPACE DLIMIT fullname
+    : server_response WHITESPACE nick WHITESPACE user WHITESPACE server WHITESPACE '*' WHITESPACE DLIMIT fullname
     ;
 
 who_is_server
@@ -263,7 +259,7 @@ end_of_who_is
 /* === WHO === */
 
 who
-    : server_response WHITESPACE target WHITESPACE user WHITESPACE host WHITESPACE server WHITESPACE nick WHITESPACE
+    : server_response WHITESPACE target WHITESPACE user WHITESPACE server WHITESPACE server WHITESPACE nick WHITESPACE
         'H' '@'? WHITESPACE DLIMIT INTEGER WHITESPACE fullname
     ;
 
