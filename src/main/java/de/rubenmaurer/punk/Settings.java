@@ -2,12 +2,14 @@ package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.util.Template;
 import de.rubenmaurer.punk.util.Terminal;
+import de.rubenmaurer.punk.util.version.Version;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -61,20 +63,14 @@ public class Settings {
 
         if(f.exists() && !f.isDirectory()) props = "./config.properties";
 
-        try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(props)) {
-            properties.load(input);
-        } catch (IOException e) {
-            Terminal.printError(e.getMessage());
-        }
+        try (InputStream propsStream = Pricefield.class.getClassLoader().getResourceAsStream(props);
+             InputStream interStream = Pricefield.class.getClassLoader().getResourceAsStream(inter);
+             InputStream versiStream = Pricefield.class.getClassLoader().getResourceAsStream(versi);
+             InputStream empty = InputStream.nullInputStream()) {
 
-        try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(inter)) {
-            internal.load(input);
-        } catch (IOException e) {
-            Terminal.printError(e.getMessage());
-        }
-
-        try (InputStream input = Pricefield.class.getClassLoader().getResourceAsStream(versi)) {
-            version.load(input);
+            properties.load(propsStream != null ? propsStream : empty);
+            internal.load(interStream != null ? interStream : empty);
+            version.load(versiStream != null ? versiStream : empty);
         } catch (IOException e) {
             Terminal.printError(e.getMessage());
         }
@@ -85,52 +81,23 @@ public class Settings {
      *
      * @return the current version
      */
-    public static String getCurrentVersion() {
+    public static Version getCurrentVersion() {
+        var version = Version.NONE;
         StringBuilder content = new StringBuilder();
-        HttpURLConnection connection = null;
 
-        try {
-            URL url = new URL(Settings.updateURL());
-            connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            connection.connect();
-            if (connection.getResponseCode() == 200) {
+        try (CloseableHttpResponse response = HttpClients.createDefault().execute(new HttpGet(Settings.updateURL()))) {
+            if (response.getStatusLine().getStatusCode() == 200) {
                 String inputLine;
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
                 }
 
-                in.close();
+                version = Version.parse(new JSONObject(content.toString()).getString("tag_name"));
             }
-        } catch (IOException ignore) {
-            // ignored
-        } finally {
-            if (connection != null) connection.disconnect();
-        }
-
-        String version = getVersionFromResponse(content.toString());
-        return version.equals("") ? null : version;
-    }
-
-    /**
-     * Extract the tag version form json-string.
-     *
-     * @param response the json-string
-     * @return the extracted tag version
-     */
-    private static String getVersionFromResponse(String response) {
-        String version = "";
-
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            version = jsonObject.getString("tag_name");
-        } catch (JSONException ignore) {
-            // ignored
+        } catch (IOException | JSONException e) {
+            Terminal.printError(e.getMessage());
         }
 
         return version;
@@ -221,8 +188,8 @@ public class Settings {
      *
      * @return the version
      */
-    public static String version() {
-        return self.version.getProperty("version", "1.0");
+    public static Version version() {
+        return Version.parse(self.version.getProperty("version", "1.0"));
     }
 
     /**
