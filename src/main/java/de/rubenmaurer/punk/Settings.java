@@ -424,11 +424,16 @@ public class Settings {
      * @return do version check?
      */
     public static boolean versionCheck() {
-        if (self.properties.containsKey("doVersionCheck")) {
-            return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+        String ovr = loadOverride("doVersionCheck");
+        if (ovr.equals("none")) {
+            if (self.properties.containsKey("doVersionCheck")) {
+                return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+            }
+
+            return false;
         }
 
-        return false;
+        return Boolean.valueOf(ovr);
     }
 
     /**

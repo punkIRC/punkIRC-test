@@ -26,10 +26,10 @@ public class Pricefield {
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
 
-        CLI.doVersionCheck();
         CLI.parseParameter(args);
-        Terminal.printHeader();
+        CLI.doVersionCheck();
 
+        Terminal.printHeader();
         Settings.checkDirectoriesAndPipe();
 
         //Launch the tests

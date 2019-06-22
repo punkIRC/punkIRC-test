@@ -87,6 +87,11 @@ public class CLI {
             if (command.equals("--log") || command.equals("-l")) {
                 Settings.storeOverride("log", "true");
             }
+
+            // Version Check
+            if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
+                Settings.storeOverride("doVersionCheck", "false");
+            }
         }
     }
 
