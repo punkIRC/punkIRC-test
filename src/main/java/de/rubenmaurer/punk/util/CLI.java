@@ -79,6 +79,11 @@ public class CLI {
                 Settings.storeOverride("java", "false");
             }
 
+            // Activate java mode
+            if (command.equals("--java") || command.equals("-j")) {
+                Settings.storeOverride("java", "true");
+            }
+
             // Select test classes
             if (command.equals("--tests") || command.equals("-t")) {
                 Settings.storeTests(storeTests(argument[1]));
