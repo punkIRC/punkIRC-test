@@ -138,16 +138,12 @@ public class Settings {
             File logDir = new File(String.format("%s", Settings.logs()));
             File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
 
-            if (!logDir.exists()) {
-                if (!logDir.mkdir()) {
-                    throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
-                }
+            if (!logDir.exists() || !logDir.mkdir()) {
+                throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
             }
 
-            if (!testDir.exists()) {
-                if (!testDir.mkdir()) {
-                    throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
-                }
+            if (!testDir.exists() || !testDir.mkdir()) {
+                throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
             }
 
             System.setErr(new PrintStream(new FileOutputStream(
@@ -389,10 +385,12 @@ public class Settings {
      * @return do version check?
      */
     public static boolean versionCheck() {
-        String ovr = loadOverride("doVersionCheck");
+        String key = "doVersionCheck";
+
+        String ovr = loadOverride(key);
         if (ovr.equals("none")) {
-            if (self.properties.containsKey("doVersionCheck")) {
-                return Boolean.parseBoolean(self.properties.getProperty("doVersionCheck"));
+            if (self.properties.containsKey(key)) {
+                return Boolean.parseBoolean(self.properties.getProperty(key));
             }
 
             return false;
@@ -417,7 +415,7 @@ public class Settings {
         try {
             Thread.sleep(1000);
         } catch (Exception ignore) {
-
+            // ignore exception
         }
     }
 }
