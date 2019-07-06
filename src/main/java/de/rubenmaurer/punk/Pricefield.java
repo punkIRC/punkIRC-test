@@ -16,7 +16,7 @@ public class Pricefield {
     /**
      * The runtime runtimeID.
      */
-    public static String runtimeID;
+    public static final String runtimeID = Settings.generateID();
 
     /**
      * Main entry point.

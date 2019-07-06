@@ -113,14 +113,12 @@ public class Settings {
     }
 
     /**
-     * Generate a runtiome id.
+     * Generate a runtime id.
      *
      * @return the id
      */
-    public static String generateID() {
-        Pricefield.runtimeID = String.valueOf(System.nanoTime()).substring(0, 5);
-
-        return Pricefield.runtimeID;
+    static String generateID() {
+        return String.valueOf(System.nanoTime()).substring(0, 5);
     }
 
     /**
