@@ -35,7 +35,7 @@ public class Terminal {
                 .render(Terminal.getDivider())
                 .render(Terminal.center(String.format("Project Pricefield | [Version]: %s | [Build]: %s", Settings.version(), Settings.build())))
                 .render(Terminal.getDivider())
-                .render(Terminal.center(String.format("ID: %s", Settings.generateID())))
+                .render(Terminal.center(String.format("runtimeID: %s", Settings.generateID())))
                 .render(Terminal.getDivider()));
     }
 

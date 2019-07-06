@@ -42,7 +42,7 @@ class TestLauncher {
         launcher.execute(request);
 
         try {
-            System.setOut(new PrintStream(new File(String.format("%s/%s/results.log", Settings.logs(), Pricefield.ID))));
+            System.setOut(new PrintStream(new File(String.format("%s/%s/results.log", Settings.logs(), Pricefield.runtimeID))));
 
             PricefieldUnitListener.testResults.forEach((status, test) -> {
                 System.out.println(String.format("%s: ", status.name()));

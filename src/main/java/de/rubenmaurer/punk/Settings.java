@@ -118,9 +118,9 @@ public class Settings {
      * @return the id
      */
     public static String generateID() {
-        Pricefield.ID = String.valueOf(System.nanoTime()).substring(0, 5);
+        Pricefield.runtimeID = String.valueOf(System.nanoTime()).substring(0, 5);
 
-        return Pricefield.ID;
+        return Pricefield.runtimeID;
     }
 
     /**
@@ -138,7 +138,7 @@ public class Settings {
     static void checkDirectoriesAndPipe() {
         try {
             File logDir = new File(String.format("%s", Settings.logs()));
-            File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.ID));
+            File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
 
             if (!logDir.exists()) {
                 if (!logDir.mkdir()) {
@@ -153,12 +153,12 @@ public class Settings {
             }
 
             System.setErr(new PrintStream(new FileOutputStream(
-                    new File(String.format("%s/%s/pricefield.log", Settings.logs(), Pricefield.ID)))));
+                    new File(String.format("%s/%s/pricefield.log", Settings.logs(), Pricefield.runtimeID)))));
 
         } catch(IOException e) {
             Terminal.printError(e.getMessage());
 
-            System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+            System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.runtimeID).render()));
             System.exit(-1);
         }
     }
