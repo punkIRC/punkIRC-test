@@ -34,3 +34,9 @@ jobs:
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)'
       ArtifactName: punkIRC
+
+  - task: Bash@3
+    displayName: 'Run sonar'
+      inputs:
+        targetType: 'inline'
+        script: 'mvn sonar:sonar -Dsonar.projectKey=punkIRC_punkIRC-test -Dsonar.organization=punkirc -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$(sonar.login)'
