@@ -25,6 +25,13 @@ import java.util.List;
 class TestLauncher {
 
     /**
+     * Private constructor.
+     */
+    private TestLauncher() {
+        throw new IllegalStateException("Launcher class");
+    }
+
+    /**
      * Launches the irc tests.
      */
     static void launch() {
