@@ -61,10 +61,10 @@ public class Server {
                 }
 
                 pb.redirectOutput(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_log.log", Settings.logs(), Pricefield.ID))));
+                        new File(String.format("%s/%s/server_log.log", Settings.logs(), Pricefield.runtimeID))));
 
                 pb.redirectError(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_error.log", Settings.logs(), Pricefield.ID))));
+                        new File(String.format("%s/%s/server_error.log", Settings.logs(), Pricefield.runtimeID))));
 
                 self.server = pb.start();
                 Thread.sleep(Settings.startDelay() * 1000);
@@ -72,7 +72,7 @@ public class Server {
                 return self.server.isAlive();
             } catch (IOException | InterruptedException e) {
                 Terminal.printError(e.getMessage());
-                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.runtimeID).render()));
 
                 System.exit(-1);
             }
@@ -105,7 +105,7 @@ public class Server {
                 return !self.server.isAlive();
             } catch(InterruptedException e) {
                 Terminal.printError(e.getMessage());
-                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.ID).render()));
+                System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.runtimeID).render()));
 
                 System.exit(-1);
             }

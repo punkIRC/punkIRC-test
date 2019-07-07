@@ -10,6 +10,7 @@ TERMINATE_MESSAGE(id) ::= "See 'logs/<id>/pricefield.log' for detailed informati
 
 VERSION_UPDATE_MESSAGE() ::= "New version available!"
 VERSION_UPDATE(old, new) ::= "Your version is '<old>', current version is '<new>'"
+VERSION_PARSE_EXCEPTION(versionString) ::= "Unable to parse '<versionString>'! Fallback to 'NONE' version!"
 
 //Debugging  log messages
 DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"

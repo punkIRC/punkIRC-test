@@ -1,5 +1,6 @@
 package de.rubenmaurer.punk.util;
 
+import de.rubenmaurer.punk.Pricefield;
 import de.rubenmaurer.punk.Settings;
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,7 +36,7 @@ public class Terminal {
                 .render(Terminal.getDivider())
                 .render(Terminal.center(String.format("Project Pricefield | [Version]: %s | [Build]: %s", Settings.version(), Settings.build())))
                 .render(Terminal.getDivider())
-                .render(Terminal.center(String.format("ID: %s", Settings.generateID())))
+                .render(Terminal.center(String.format("runtimeID: %s", Pricefield.runtimeID)))
                 .render(Terminal.getDivider()));
     }
 

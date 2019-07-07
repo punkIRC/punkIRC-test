@@ -13,6 +13,7 @@ import de.rubenmaurer.punk.test.privmsg.NoticePrivmsg;
 import de.rubenmaurer.punk.test.robustness.Robustness;
 import de.rubenmaurer.punk.test.unknown.Unknown;
 import de.rubenmaurer.punk.test.whois.Whois;
+import de.rubenmaurer.punk.util.version.Version;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,14 +31,14 @@ public class CLI {
      * Look for a new version available.
      */
     public static void doVersionCheck() {
-        String onlineVersion = Settings.getCurrentVersion();
+        Version onlineVersion = Settings.getCurrentVersion();
         if (onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
             System.out.print(Terminal.getDivider());
             System.out.print(Terminal.center(Template.get("VERSION_UPDATE_MESSAGE").render()));
             System.out.print(
                     Terminal.center(Template.get("VERSION_UPDATE")
-                            .single("old", Settings.version())
-                            .single("new", onlineVersion)
+                            .single("old", Settings.version().toString())
+                            .single("new", onlineVersion.toString())
                             .render()
                     )
             );
@@ -96,6 +97,11 @@ public class CLI {
             // Version Check
             if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
                 Settings.storeOverride("doVersionCheck", "false");
+            }
+
+            // JUnit report
+            if (command.equals("--report") || command.equals("-r")) {
+                Settings.storeOverride("extendedReport", "True");
             }
         }
     }

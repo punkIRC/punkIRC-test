@@ -14,9 +14,9 @@ import org.fusesource.jansi.AnsiConsole;
 public class Pricefield {
 
     /**
-     * The runtime ID.
+     * The runtime runtimeID.
      */
-    public static String ID;
+    public static final String runtimeID = Settings.generateID();
 
     /**
      * Main entry point.

@@ -113,3 +113,4 @@ buildNumber.properties
 /results/
 /logs/
 /CHANGELOG.md
+/.server/
