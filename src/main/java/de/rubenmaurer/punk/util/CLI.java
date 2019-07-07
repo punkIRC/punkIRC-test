@@ -98,6 +98,11 @@ public class CLI {
             if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
                 Settings.storeOverride("doVersionCheck", "false");
             }
+
+            // JUnit report
+            if (command.equals("--report") || command.equals("-r")) {
+                Settings.storeOverride("extendedReport", "True");
+            }
         }
     }
 

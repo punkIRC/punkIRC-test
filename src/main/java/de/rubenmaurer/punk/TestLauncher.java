@@ -8,10 +8,14 @@ import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.reporting.legacy.xml.LegacyXmlReportGeneratingListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,13 +46,20 @@ class TestLauncher {
 
         org.junit.platform.launcher.Launcher launcher = LauncherFactory.create();
 
-        // Register a listener of your choice
-        TestExecutionListener listener = new PricefieldUnitListener();
-        launcher.registerTestExecutionListeners(listener);
-
-        launcher.execute(request);
-
         try {
+            PrintWriter printer = new PrintWriter(new File(String.format("%s/results.xml", Settings.logs())));
+
+            // Register a listener of your choice
+            TestExecutionListener listener = new PricefieldUnitListener();
+            TestExecutionListener sumListener = new LegacyXmlReportGeneratingListener(Paths.get(Settings.logs()), printer);
+            launcher.registerTestExecutionListeners(listener);
+
+            if (Settings.generateJUnitReport()) {
+                launcher.registerTestExecutionListeners(sumListener);
+            }
+
+            launcher.execute(request);
+
             System.setOut(new PrintStream(new File(String.format("%s/%s/results.log", Settings.logs(), Pricefield.runtimeID))));
 
             PricefieldUnitListener.testResults.forEach((status, test) -> {

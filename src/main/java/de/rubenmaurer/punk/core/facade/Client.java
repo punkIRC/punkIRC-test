@@ -176,7 +176,7 @@ public class Client {
      * @param code the code to search for
      * @return the list of responses
      */
-    public List<String> log(int code) {
+    public LinkedList<String> log(int code) {
         String result = null;
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, code, timeout);
@@ -201,7 +201,7 @@ public class Client {
      * @param response the {@link Response} which code is used
      * @return the list of responses
      */
-    public List<String> log(Response response) {
+    public LinkedList<String> log(Response response) {
         return log(response.value);
     }
 

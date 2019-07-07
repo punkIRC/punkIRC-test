@@ -49,7 +49,7 @@ public class Version {
 
     private Version tryParse(String data) throws VersionParseException {
         try {
-            var values = data.split("\\.");
+            String[] values = data.split("\\.");
 
             if (values.length > 0) {
                 if (values[0].length() > 1) {
@@ -64,7 +64,7 @@ public class Version {
 
                     if (values.length > 2) {
                         if (values[2].contains("-")) {
-                            var splits = values[2].split("-");
+                            String[] splits = values[2].split("-");
 
                             suffix = splits[1];
                             values[2] = splits[0];

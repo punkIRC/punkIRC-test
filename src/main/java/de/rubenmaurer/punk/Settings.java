@@ -65,12 +65,11 @@ public class Settings {
 
         try (InputStream propsStream = Pricefield.class.getClassLoader().getResourceAsStream(props);
              InputStream interStream = Pricefield.class.getClassLoader().getResourceAsStream(inter);
-             InputStream versiStream = Pricefield.class.getClassLoader().getResourceAsStream(versi);
-             InputStream empty = InputStream.nullInputStream()) {
+             InputStream versiStream = Pricefield.class.getClassLoader().getResourceAsStream(versi)) {
 
-            properties.load(propsStream != null ? propsStream : empty);
-            internal.load(interStream != null ? interStream : empty);
-            version.load(versiStream != null ? versiStream : empty);
+            properties.load(propsStream);
+            internal.load(interStream);
+            version.load(versiStream);
         } catch (IOException e) {
             Terminal.printError(e.getMessage());
         }
@@ -82,7 +81,7 @@ public class Settings {
      * @return the current version
      */
     public static Version getCurrentVersion() {
-        var version = Version.NONE;
+        Version version = Version.NONE;
         StringBuilder content = new StringBuilder();
 
         try (CloseableHttpResponse response = HttpClients.createDefault().execute(new HttpGet(Settings.updateURL()))) {
@@ -97,7 +96,7 @@ public class Settings {
                 version = Version.parse(new JSONObject(content.toString()).getString("tag_name"));
             }
         } catch (IOException | JSONException e) {
-            Terminal.printError(e.getMessage());
+            Terminal.debugErro(e.getMessage());
         }
 
         return version;
@@ -127,7 +126,7 @@ public class Settings {
      * @return the path
      */
     private static String path() {
-        return new File(ClassLoader.getSystemClassLoader().getResource(".").getPath()).getAbsolutePath();
+        return new File(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).getPath()).getAbsolutePath();
     }
 
     /**
@@ -138,11 +137,11 @@ public class Settings {
             File logDir = new File(String.format("%s", Settings.logs()));
             File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
 
-            if (!logDir.exists() || !logDir.mkdir()) {
+            if (!logDir.exists() && !logDir.mkdir()) {
                 throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
             }
 
-            if (!testDir.exists() || !testDir.mkdir()) {
+            if (!testDir.exists() && !testDir.mkdir()) {
                 throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
             }
 
@@ -406,6 +405,20 @@ public class Settings {
      */
     private static String updateURL() {
         return self.internal.getProperty("updateURL");
+    }
+
+    /**
+     * Generate an extended junit report?
+     *
+     * @return generate a report?
+     */
+    public static boolean generateJUnitReport() {
+        String ovr = loadOverride("extendedReport");
+        if (!ovr.equals("none")) {
+            return Boolean.parseBoolean(ovr);
+        }
+
+        return false;
     }
 
     /**
