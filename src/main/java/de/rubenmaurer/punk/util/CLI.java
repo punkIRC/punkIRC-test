@@ -116,7 +116,7 @@ public class CLI {
         List<Class> classes = new LinkedList<>();
 
         for (String cls : tests.split(" ")) {
-            if (cls.equals("Channel")) {
+            if (cls.equals("Channel") || cls.equals("All")) {
                 classes.add(AssigmentChannel.class);
                 classes.add(JoinChannel.class);
                 classes.add(ListChannel.class);
@@ -126,35 +126,35 @@ public class CLI {
                 classes.add(WhoChannel.class);
             }
 
-            if (cls.equals("Connection")) {
+            if (cls.equals("Connection") || cls.equals("All")) {
                 classes.add(BasicConnection.class);
                 classes.add(FullConnection.class);
                 classes.add(MultiUserConnection.class);
                 classes.add(QuitConnection.class);
             }
 
-            if (cls.equals("MOTD")) {
+            if (cls.equals("MOTD") || cls.equals("All")) {
                 classes.add(Motd.class);
             }
 
-            if (cls.equals("Ping")) {
+            if (cls.equals("Ping") || cls.equals("All")) {
                 classes.add(Ping.class);
                 classes.add(Pong.class);
             }
 
-            if (cls.equals("PrivateMsg")) {
+            if (cls.equals("PrivateMsg") || cls.equals("All")) {
                 classes.add(NoticePrivmsg.class);
             }
 
-            if (cls.equals("Robustness")) {
+            if (cls.equals("Robustness") || cls.equals("All")) {
                 classes.add(Robustness.class);
             }
 
-            if (cls.equals("Unknown")) {
+            if (cls.equals("Unknown") || cls.equals("All")) {
                 classes.add(Unknown.class);
             }
 
-            if (cls.equals("WhoIs")) {
+            if (cls.equals("WhoIs") || cls.equals("All")) {
                 classes.add(Whois.class);
             }
         }
