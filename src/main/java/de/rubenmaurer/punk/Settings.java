@@ -140,7 +140,9 @@ public class Settings {
             Path testDir = Paths.get(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
 
             if (Files.notExists(testDir)) {
-                if (Files.notExists(Files.createDirectories(testDir))) {
+                if (Files.notExists(Files.createDirectories(testDir)) ||
+                    Files.notExists(Files.createDirectories(Paths.get(String.format("%s/server_logs", testDir)))) ||
+                    Files.notExists(Files.createDirectories(Paths.get(String.format("%s/server_error", testDir))))) {
                     throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
                 }
             }

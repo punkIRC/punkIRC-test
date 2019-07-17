@@ -51,7 +51,7 @@ public class Server {
      *
      * @return server is online?
      */
-    static boolean start() {
+    static boolean start(String test) {
         if (self != null) {
             try {
                 ProcessBuilder pb = new ProcessBuilder(Settings.javaServerSetup(self.path));
@@ -61,10 +61,10 @@ public class Server {
                 }
 
                 pb.redirectOutput(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_log.log", Settings.logs(), Pricefield.runtimeID))));
+                        new File(String.format("%s/%s/server_logs/%s.log", Settings.logs(), Pricefield.runtimeID, test))));
 
                 pb.redirectError(ProcessBuilder.Redirect.appendTo(
-                        new File(String.format("%s/%s/server_error.log", Settings.logs(), Pricefield.runtimeID))));
+                        new File(String.format("%s/%s/server_error/%s.log", Settings.logs(), Pricefield.runtimeID, test))));
 
                 self.server = pb.start();
                 Thread.sleep(Settings.startDelay() * 1000);
