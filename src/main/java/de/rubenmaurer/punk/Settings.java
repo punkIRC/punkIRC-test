@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -134,15 +137,12 @@ public class Settings {
      */
     static void checkDirectoriesAndPipe() {
         try {
-            File logDir = new File(String.format("%s", Settings.logs()));
-            File testDir = new File(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
+            Path testDir = Paths.get(String.format("%s/%s", Settings.logs(), Pricefield.runtimeID));
 
-            if (!logDir.exists() && !logDir.mkdir()) {
-                throw new IOException(Template.get("UNABLE_TO_CREATE_LOG_DIR").render());
-            }
-
-            if (!testDir.exists() && !testDir.mkdir()) {
-                throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
+            if (Files.notExists(testDir)) {
+                if (Files.notExists(Files.createDirectories(testDir))) {
+                    throw new IOException(Template.get("UNABLE_TO_CREATE_TEST_DIR").render());
+                }
             }
 
             System.setErr(new PrintStream(new FileOutputStream(
