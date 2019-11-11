@@ -82,6 +82,24 @@ adjusted by command line parameter.
 -nj
 ```
 
+##### Force use of java mode
+```cmd
+--java
+-j
+```
+
+##### Skip version check on start
+```cmd
+--noVersioCheck
+-nvc
+```
+
+##### Create a JUnit report
+```cmd
+--report
+-r
+```
+
 ##### Decide which tests to execute
 The most important parameter and the only one which is required is the ```tests``` parameter.
 Without this parameter ```priceIRC``` will do nothing.
@@ -105,13 +123,19 @@ Unknown
 WhoIs
 ```
 
+To execute all tests you can simply use ``All`` as parameter for ``--tests="<tests>"``
+
 An overview of which tests are to execute for which assignment can found [here](https://github.com/punkIRC/punkIRC-test/blob/master/TestOverview.md).
 
 ### Examples
+**Execute all tests**
+```batch
+java -jar priceIRC.jar -t="All"
+```
 
 **Execute the 'Ping' test for a non-java server**
 ```batch
-java -jar priceIRC.jar -nj -t="Ping"
+java -jar priceIRC.jar -nj -e="./server.sh" -t="Ping"
 ```
 
 **Execute several tests and override server executable**
