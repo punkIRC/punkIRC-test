@@ -25,10 +25,10 @@ public abstract class BaseTest {
     }
 
     @BeforeEach
-    void before() {
+    void before(TestInfo testInfo) {
         Parser.reset();
 
-        assumeTrue(Session.startServer());
+        assumeTrue(Session.startServer(testInfo.getDisplayName()));
     }
 
     @AfterEach

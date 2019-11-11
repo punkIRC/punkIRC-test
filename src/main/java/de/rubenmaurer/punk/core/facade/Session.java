@@ -71,8 +71,8 @@ public class Session {
      *
      * @return server started?
      */
-    public static boolean startServer() {
-        return Server.start();
+    public static boolean startServer(String test) {
+        return Server.start(test);
     }
 
     /**
