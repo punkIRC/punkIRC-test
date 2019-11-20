@@ -4,6 +4,7 @@ import de.rubenmaurer.punk.IRCLexer;
 import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
+import de.rubenmaurer.punk.util.Template;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -52,24 +53,23 @@ public class Parser {
      * @param values collection of values needed for the evaluation
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
-        if (!message.equals("")) {
-            CharStream stream = CharStreams.fromString(message);
+        if (message.isEmpty()) throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        CharStream stream = CharStreams.fromString(message);
 
-            IRCLexer lexer = new IRCLexer(stream);
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
+        IRCLexer lexer = new IRCLexer(stream);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            IRCParser parser = new IRCParser(tokens);
-            parser.removeErrorListeners();
-            parser.addErrorListener(PricefieldErrorListener.INSTANCE);
+        IRCParser parser = new IRCParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-            ParseTreeWalker walker = new ParseTreeWalker();
-            walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), tree(parser));
-        }
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), tree(parser));
 
-        ruleID = -1;
+        reset();
     }
 
     /**

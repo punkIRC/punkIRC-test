@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Represents a single irc client.
@@ -124,9 +125,11 @@ public class Client {
         this.username = username;
         this.fullname = fullname;
 
-        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-        Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
-        this.connection = (ActorRef) Await.result(future, timeout.duration());
+        if (!Settings.isDebug()) {
+            Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+            Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
+            this.connection = (ActorRef) Await.result(future, timeout.duration());
+        }
     }
 
     /**
@@ -176,7 +179,7 @@ public class Client {
      * @param code the code to search for
      * @return the list of responses
      */
-    public LinkedList<String> log(int code) {
+    private LinkedList<String> logOrEmpty(int code) {
         String result = null;
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, code, timeout);
@@ -188,7 +191,7 @@ public class Client {
         }
 
         if (result != null) {
-            return new LinkedList<>(Arrays.asList(result.split(";")));
+            return Arrays.stream(result.split(";")).filter(s -> !s.isEmpty()).collect(Collectors.toCollection(LinkedList::new));
         }
 
         return new LinkedList<>();
@@ -201,8 +204,22 @@ public class Client {
      * @param response the {@link Response} which code is used
      * @return the list of responses
      */
-    public LinkedList<String> log(Response response) {
-        return log(response.value);
+    public LinkedList<String> logOrEmpty(Response response) {
+        return logOrEmpty(response.value);
+    }
+
+    /**
+     * Retrieves a list of server replies with a specific response code.
+     * If no responses matching the given code are found, an exception occurs.
+     *
+     * @param response the {@link Response} which code is used
+     * @return the list of responses
+     */
+    public LinkedList<String> logOrThrow(Response response) {
+        LinkedList<String> result = logOrEmpty(response);
+
+        if (result.isEmpty()) throw new RuntimeException();
+        return result;
     }
 
     /**
