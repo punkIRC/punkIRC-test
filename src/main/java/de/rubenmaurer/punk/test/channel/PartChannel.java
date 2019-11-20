@@ -93,9 +93,11 @@ public class PartChannel extends BaseTest {
         Client c1 = create(Client.Preset.CHLOE);
 
         String channel = "Lighthouse";
-        c1.authenticate();
+        if (Session.serverIsAlive()) {
+            c1.authenticate();
+            c1.sendAndReceive(Utilities.part(channel, "What ever"), 1);
+        }
 
-        c1.send(Utilities.part(channel, "What ever"));
         Evaluation.noSuchChannel(c1, channel);
     }
 
@@ -106,7 +108,7 @@ public class PartChannel extends BaseTest {
         String channel = "Blackwell";
         if (Session.serverIsAlive()) {
             c.authenticateAndJoin(channel);
-            c.sendAndReceive(String.format("PART #%s", channel), 1);
+            c.send(String.format("PART #%s", channel));
             c.sendAndReceive(String.format("PART #%s", channel), 1);
         }
 
