@@ -101,7 +101,17 @@ public class CLI {
 
             // JUnit report
             if (command.equals("--report") || command.equals("-r")) {
-                Settings.storeOverride("extendedReport", "True");
+                Settings.storeOverride("extendedReport", "true");
+            }
+
+            // Enable debug mode
+            if (command.equals("--debug")) {
+                Settings.storeOverride("debug", "true");
+            }
+
+            // Enable developer mode
+            if (command.equals("--dev")) {
+                Settings.storeOverride("dev", "true");
             }
         }
     }

@@ -297,10 +297,10 @@ public class Settings {
     public static boolean java() {
         String ovr = loadOverride("java");
         if (!ovr.equals("none")) {
-            return Boolean.valueOf(ovr);
+            return Boolean.parseBoolean(ovr);
         }
 
-        return Boolean.valueOf(self.properties.getProperty("java"));
+        return Boolean.parseBoolean(self.properties.getProperty("java"));
     }
 
     /**
@@ -359,7 +359,7 @@ public class Settings {
      * @return is debug mode?
      */
     public static boolean debug() {
-        return Boolean.valueOf(loadOverride("log"));
+        return Boolean.parseBoolean(loadOverride("log"));
     }
 
     /**
@@ -397,7 +397,7 @@ public class Settings {
             return false;
         }
 
-        return Boolean.valueOf(ovr);
+        return Boolean.parseBoolean(ovr);
     }
 
     /**
@@ -414,7 +414,7 @@ public class Settings {
      *
      * @return generate a report?
      */
-    public static boolean generateJUnitReport() {
+    static boolean generateJUnitReport() {
         String ovr = loadOverride("extendedReport");
         if (!ovr.equals("none")) {
             return Boolean.parseBoolean(ovr);
@@ -432,5 +432,33 @@ public class Settings {
         } catch (Exception ignore) {
             // ignore exception
         }
+    }
+
+    /**
+     * Checks if the client runs in debug mode.
+     *
+     * @return is running in debug mode?
+     */
+    public static boolean isDebug() {
+        String ovr = loadOverride("debug");
+        if (!ovr.equals("none")) {
+            return Boolean.parseBoolean(ovr);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the client runs in dev mode.
+     *
+     * @return is running in dev mode?
+     */
+    public static boolean devMode() {
+        String ovr = loadOverride("dev");
+        if (!ovr.equals("none")) {
+            return Boolean.parseBoolean(ovr);
+        }
+
+        return false;
     }
 }
