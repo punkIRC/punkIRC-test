@@ -4,6 +4,7 @@ import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
+import de.rubenmaurer.punk.util.Terminal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -323,7 +324,7 @@ public class Evaluation {
      * @param channel the channel
      */
     public static void noSuchChannel(Client sender, String channel) {
-        Response r = Response.NO_SUCH_NICK;
+        Response r = Response.NO_SUCH_CHANNEL;
 
         HashMap<String, String> map = new HashMap<>();
         map.put("target", String.format("#%s", channel));
@@ -422,11 +423,6 @@ public class Evaluation {
         values.put("channel", String.format("#%s", channel));
         values.put("topic", expected);
         values.put("user", String.valueOf(user));
-
-        if (Settings.devMode()) {
-            System.err.println(String.format("[ DEV ] %s (%s)", sender.logOrEmpty(Response.LIST), values));
-            System.err.println(String.format("[ DEV ] %s", sender.logOrEmpty(Response.LIST_END)));
-        }
 
         if (user > 1) {
             Parser.parse(sender, Response.LIST, sender.logOrThrow(Response.LIST).getLast(), values);
