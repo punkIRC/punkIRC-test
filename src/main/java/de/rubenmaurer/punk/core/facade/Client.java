@@ -208,7 +208,7 @@ public class Client {
      * @param response the {@link Response} which code is used
      * @return the list of responses
      */
-    LinkedList<String> logOrEmpty(Response response) {
+    public LinkedList<String> logOrEmpty(Response response) {
         return logOrEmpty(response.value);
     }
 
@@ -222,7 +222,10 @@ public class Client {
     public LinkedList<String> logOrThrow(Response response) {
         LinkedList<String> result = logOrEmpty(response);
 
-        if (result.isEmpty()) throw new RuntimeException();
+        if (result.isEmpty()) {
+            throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        }
+
         return result;
     }
 
@@ -375,18 +378,23 @@ public class Client {
      * @return the last trash line
      */
     public String trash() {
+        String result = "";
         Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> f = Patterns.ask(connection, "trash", t);
 
         try {
-            return ((String) Await.result(f, t.duration())).split("\r\n")[0];
+            result = ((String) Await.result(f, t.duration())).split("\r\n")[0];
         } catch (Exception e) {
             if (Settings.debug()) {
                 System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
             }
         }
 
-        return "";
+        if (Settings.devMode()) {
+            Terminal.devLog(result);
+        }
+
+        return result;
     }
 
     /**

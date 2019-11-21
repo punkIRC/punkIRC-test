@@ -190,6 +190,10 @@ public class Terminal {
     }
 
     public static void devLog(String message) {
-        System.err.println(Template.log(message));
+        System.err.println(Template.log("DEV", message));
+    }
+
+    public static void parserLog(String message) {
+        System.err.println(Template.log("PARSER", message));
     }
 }

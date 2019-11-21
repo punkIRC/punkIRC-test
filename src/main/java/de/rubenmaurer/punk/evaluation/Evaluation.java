@@ -5,7 +5,10 @@ import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Used for call the {@link Parser} and parse received messages.
@@ -326,12 +329,13 @@ public class Evaluation {
      * @param channel the channel
      */
     public static void noSuchChannel(Client sender, String channel) {
-        Response r = Response.NO_SUCH_CHANNEL;
-
         HashMap<String, String> map = new HashMap<>();
         map.put("target", String.format("#%s", channel));
 
-        Parser.parse(sender, sender, r, sender.logOrThrow(r).getLast(), map);
+        List<String> log = sender.logOrEmpty(Response.NO_SUCH_NICK);
+        log.addAll(sender.logOrEmpty(Response.NO_SUCH_CHANNEL));
+
+        Parser.parse(sender, sender, log.stream().anyMatch(s -> s.contains(String.valueOf(Response.NO_SUCH_NICK.value))) ? Response.NO_SUCH_NICK : Response.NO_SUCH_CHANNEL, log.get(0), map);
     }
 
     /**
@@ -388,8 +392,12 @@ public class Evaluation {
         values.put("channel", String.format("#%s", channel));
         values.put("topic", topic);
 
+        List<String> log = sender.logOrEmpty(Response.TOPIC);
+
         Parser.useRule(IRCParser.RULE_topic);
-        Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
+        Parser.parse(sender, Response.TOPIC, log.isEmpty()
+                ? Arrays.stream(sender.lastLines()).filter(s -> s.contains("TOPIC")).findFirst().get()
+                : log.get(0), values);
     }
 
     /**

@@ -16,4 +16,4 @@ EMPTY_STRING_FOR_PARSER() ::= "Tried to parse an empty string!"
 
 //Debugging  log messages
 DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"
-LOG(message) ::= "[DEV_LOG] <message>"
+LOG(type, message) ::= "[<type>] <message>"

@@ -2,9 +2,11 @@ package de.rubenmaurer.punk.evaluation.antlr;
 
 import de.rubenmaurer.punk.IRCLexer;
 import de.rubenmaurer.punk.IRCParser;
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
 import de.rubenmaurer.punk.util.Template;
+import de.rubenmaurer.punk.util.Terminal;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -54,6 +56,8 @@ public class Parser {
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
         if (message.isEmpty()) throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        if (Settings.devMode()) Terminal.parserLog(message);
+
         CharStream stream = CharStreams.fromString(message);
 
         IRCLexer lexer = new IRCLexer(stream);
