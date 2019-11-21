@@ -90,9 +90,9 @@ public class CLI {
             }
 
             // Version Check
-            if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
+            /*if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
                 Settings.storeOverride("doVersionCheck", "false");
-            }
+            }*/
 
             // JUnit report
             if (command.equals("--report") || command.equals("-r")) {
