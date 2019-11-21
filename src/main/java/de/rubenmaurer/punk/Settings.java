@@ -2,6 +2,7 @@ package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.util.Template;
 import de.rubenmaurer.punk.util.Terminal;
+import de.rubenmaurer.punk.util.version.Build;
 import de.rubenmaurer.punk.util.version.Version;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -192,8 +193,8 @@ public class Settings {
      *
      * @return the build number
      */
-    public static String build() {
-        return self.version.getProperty("build", "501");
+    public static Build build() {
+        return Build.parse(self.version.getProperty("build", "0"));
     }
 
     /**
@@ -217,7 +218,7 @@ public class Settings {
     /**
      * Get the executable path.
      *
-     * @return the paath
+     * @return the path
      */
     public static String executable() {
         String ovr = loadOverride("executable");

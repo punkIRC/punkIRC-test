@@ -7,13 +7,7 @@ import de.rubenmaurer.punk.test.connection.BasicConnection;
 import de.rubenmaurer.punk.test.connection.FullConnection;
 import de.rubenmaurer.punk.test.connection.MultiUserConnection;
 import de.rubenmaurer.punk.test.connection.QuitConnection;
-import de.rubenmaurer.punk.test.motd.Motd;
-import de.rubenmaurer.punk.test.ping.Ping;
-import de.rubenmaurer.punk.test.ping.Pong;
 import de.rubenmaurer.punk.test.privmsg.NoticePrivmsg;
-import de.rubenmaurer.punk.test.robustness.Robustness;
-import de.rubenmaurer.punk.test.unknown.Unknown;
-import de.rubenmaurer.punk.test.whois.Whois;
 import de.rubenmaurer.punk.util.version.Version;
 
 import java.util.LinkedList;
@@ -33,7 +27,7 @@ public class CLI {
      */
     public static void doVersionCheck() {
         Version onlineVersion = Settings.getCurrentVersion();
-        if (onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
+        if (!Settings.devMode() && onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
             System.out.print(Terminal.getDivider());
             System.out.print(Terminal.center(Template.get("VERSION_UPDATE_MESSAGE").render()));
             System.out.print(
