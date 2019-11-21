@@ -13,6 +13,7 @@ VERSION_UPDATE(old, new) ::= "Your version is '<old>', current version is '<new>
 VERSION_PARSE_EXCEPTION(versionString) ::= "Unable to parse '<versionString>'! Fallback to 'NONE' version!"
 
 EMPTY_STRING_FOR_PARSER() ::= "Tried to parse an empty string!"
+NO_TESTS() ::= "No tests selected!"
 
 //Debugging  log messages
 DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"

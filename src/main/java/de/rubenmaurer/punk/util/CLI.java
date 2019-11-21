@@ -143,7 +143,7 @@ public class CLI {
             }
 
             TestOverview.CLASSES.forEach(cs -> {
-                if (cs.getSimpleName().toLowerCase().equals(cls.toLowerCase())) {
+                if (cs.getSimpleName().equals(cls)) {
                     classes.add(cs);
                 }
             });
