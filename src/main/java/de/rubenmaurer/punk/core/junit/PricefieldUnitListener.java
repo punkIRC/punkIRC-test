@@ -49,7 +49,7 @@ public class PricefieldUnitListener implements TestExecutionListener {
 
             String status = ansi().fgBlue().render("PROCESSING").fgDefault().toString();
             if (!testIdentifier.isContainer()) {
-                System.out.println(ansi().saveCursorPosition()
+                System.out.print(ansi().saveCursorPosition()
                         .render(Terminal.twoSidedColumn(display, String.valueOf(ansi().render(Terminal.cageStatus(status))))));
 
                 testCount++;

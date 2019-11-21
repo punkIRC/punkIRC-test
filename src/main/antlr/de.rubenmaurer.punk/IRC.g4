@@ -270,7 +270,7 @@ end_of_who
 /* === ERROR's === */
 
 no_such_nick_channel
-    : server_response WHITESPACE target WHITESPACE DLIMIT ('No such channel' | 'No such nick')
+    : server_response WHITESPACE target WHITESPACE DLIMIT ('No such channel' | 'No such nick/channel')
     ;
 
 cannot_send_to_channel

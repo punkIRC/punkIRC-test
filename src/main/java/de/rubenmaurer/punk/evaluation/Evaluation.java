@@ -4,9 +4,7 @@ import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
-import de.rubenmaurer.punk.util.Terminal;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -161,9 +159,13 @@ public class Evaluation {
      * Tries to evaluate the last noSuchNick message.
      *
      * @param sender the sender
+     * @param target the target
      */
-    public static void noSuchNick(Client sender) {
-        Parser.parse(sender, Response.NO_SUCH_NICK, sender.logOrThrow(Response.NO_SUCH_NICK).getLast());
+    public static void noSuchNick(Client sender, String target) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("target", target);
+
+        Parser.parse(sender, Response.NO_SUCH_NICK, sender.logOrThrow(Response.NO_SUCH_NICK).getLast(), map);
     }
 
     /**

@@ -180,21 +180,25 @@ public class Client {
      * @return the list of responses
      */
     private LinkedList<String> logOrEmpty(int code) {
-        String result = null;
+        String result;
+        LinkedList<String> resultList = new LinkedList<>();
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, code, timeout);
 
         try {
             result = (String) Await.result(future, timeout.duration());
+            if (result != null) {
+                resultList = Arrays.stream(result.split(";")).filter(s -> !s.isEmpty()).collect(Collectors.toCollection(LinkedList::new));
+            }
         } catch (Exception e) {
             Terminal.debugErro(e.getMessage());
         }
 
-        if (result != null) {
-            return Arrays.stream(result.split(";")).filter(s -> !s.isEmpty()).collect(Collectors.toCollection(LinkedList::new));
+        if (Settings.devMode()) {
+            Terminal.devLog(resultList.toString());
         }
 
-        return new LinkedList<>();
+        return resultList;
     }
 
     /**
@@ -204,7 +208,7 @@ public class Client {
      * @param response the {@link Response} which code is used
      * @return the list of responses
      */
-    public LinkedList<String> logOrEmpty(Response response) {
+    LinkedList<String> logOrEmpty(Response response) {
         return logOrEmpty(response.value);
     }
 

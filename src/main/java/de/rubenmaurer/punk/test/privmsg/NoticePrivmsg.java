@@ -58,7 +58,7 @@ public class NoticePrivmsg extends BaseTest {
             c1.send(Utilities.privateMessage(c2, "Hello"));
         }
 
-        Evaluation.noSuchNick(c1);
+        Evaluation.noSuchNick(c1, c2.nickname());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package de.rubenmaurer.punk.util;
 
 import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.test.TestOverview;
 import de.rubenmaurer.punk.test.channel.*;
 import de.rubenmaurer.punk.test.connection.BasicConnection;
 import de.rubenmaurer.punk.test.connection.FullConnection;
@@ -143,30 +144,15 @@ public class CLI {
                 classes.add(QuitConnection.class);
             }
 
-            if (cls.equals("MOTD") || cls.equals("All")) {
-                classes.add(Motd.class);
-            }
-
-            if (cls.equals("Ping") || cls.equals("All")) {
-                classes.add(Ping.class);
-                classes.add(Pong.class);
-            }
-
             if (cls.equals("PrivateMsg") || cls.equals("All")) {
                 classes.add(NoticePrivmsg.class);
             }
 
-            if (cls.equals("Robustness") || cls.equals("All")) {
-                classes.add(Robustness.class);
-            }
-
-            if (cls.equals("Unknown") || cls.equals("All")) {
-                classes.add(Unknown.class);
-            }
-
-            if (cls.equals("WhoIs") || cls.equals("All")) {
-                classes.add(Whois.class);
-            }
+            TestOverview.CLASSES.forEach(cs -> {
+                if (cs.getSimpleName().toLowerCase().equals(cls.toLowerCase())) {
+                    classes.add(cs);
+                }
+            });
         }
 
         return classes;
