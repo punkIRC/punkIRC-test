@@ -45,8 +45,7 @@ stopDelay=2             # Seconds to wait until your server is fully offline
                         # Same as above.
 
 authLines=10            # The amount of lines your server sent during authentication
-                        # A 'perfect' server sends 10 lines during authentication.
-                        
+                        # A 'perfect' server sends 10 lines during authentication.                   
 ```
 
 Most of the values, probably can left untouched.
