@@ -91,6 +91,12 @@ public class Template {
                 .single("message", message).render();
     }
 
+    static String log(String type, String message) {
+        return Template.get("LOG")
+                .single("type", type)
+                .single("message", message).render();
+    }
+
     /**
      * Fill a single var in loaded template.
      *

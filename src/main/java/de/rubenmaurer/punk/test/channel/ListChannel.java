@@ -44,6 +44,7 @@ public class ListChannel extends BaseTest {
 
             c1.sendAndReceive(Utilities.setTopic(channel, topic));
             c1.sendAndReceive(Utilities.list(channel), 2);
+            c3.sendAndReceive(Utilities.list("Hell"), 2);
         }
 
         Evaluation.list(c1, channel, topic, 2);
@@ -62,10 +63,10 @@ public class ListChannel extends BaseTest {
             c2.authenticate();
             c3.authenticate();
 
-            c1.sendAndReceive(Utilities.list(channel), 2);
+            c1.sendAndReceive(Utilities.list(channel), 1);
         }
 
-        Evaluation.list(c1, channel, "", 0);
+        Evaluation.list(c1, channel, "", 1);
     }
 
     @Test
@@ -86,6 +87,6 @@ public class ListChannel extends BaseTest {
             c1.sendAndReceive(Utilities.list(channel), 2);
         }
 
-        Evaluation.list(c3, channel, topic, 1);
+        Evaluation.list(c1, channel, topic, 1);
     }
 }

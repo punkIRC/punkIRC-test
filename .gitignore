@@ -114,3 +114,9 @@ buildNumber.properties
 /logs/
 /CHANGELOG.md
 /.server/
+!/build.sh
+!/.pricefield/
+/build.sh
+/.pricefield/chirc
+/.pricefield/config.properties
+/.pricefield/logs/results.xml

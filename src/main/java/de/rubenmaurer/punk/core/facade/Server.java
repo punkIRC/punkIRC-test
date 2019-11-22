@@ -72,6 +72,7 @@ public class Server {
                 return self.server.isAlive();
             } catch (IOException | InterruptedException e) {
                 Terminal.printError(e.getMessage());
+                System.out.println("\r\n");
                 System.out.println(Terminal.center(Template.get("TERMINATE_MESSAGE").single("id", Pricefield.runtimeID).render()));
 
                 System.exit(-1);

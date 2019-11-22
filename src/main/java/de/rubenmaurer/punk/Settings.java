@@ -2,6 +2,7 @@ package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.util.Template;
 import de.rubenmaurer.punk.util.Terminal;
+import de.rubenmaurer.punk.util.version.Build;
 import de.rubenmaurer.punk.util.version.Version;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -192,8 +193,8 @@ public class Settings {
      *
      * @return the build number
      */
-    public static String build() {
-        return self.version.getProperty("build", "501");
+    public static Build build() {
+        return Build.parse(self.version.getProperty("build", "0"));
     }
 
     /**
@@ -217,7 +218,7 @@ public class Settings {
     /**
      * Get the executable path.
      *
-     * @return the paath
+     * @return the path
      */
     public static String executable() {
         String ovr = loadOverride("executable");
@@ -297,10 +298,10 @@ public class Settings {
     public static boolean java() {
         String ovr = loadOverride("java");
         if (!ovr.equals("none")) {
-            return Boolean.valueOf(ovr);
+            return Boolean.parseBoolean(ovr);
         }
 
-        return Boolean.valueOf(self.properties.getProperty("java"));
+        return Boolean.parseBoolean(self.properties.getProperty("java"));
     }
 
     /**
@@ -359,7 +360,7 @@ public class Settings {
      * @return is debug mode?
      */
     public static boolean debug() {
-        return Boolean.valueOf(loadOverride("log"));
+        return Boolean.parseBoolean(loadOverride("log"));
     }
 
     /**
@@ -397,7 +398,7 @@ public class Settings {
             return false;
         }
 
-        return Boolean.valueOf(ovr);
+        return Boolean.parseBoolean(ovr);
     }
 
     /**
@@ -414,7 +415,7 @@ public class Settings {
      *
      * @return generate a report?
      */
-    public static boolean generateJUnitReport() {
+    static boolean generateJUnitReport() {
         String ovr = loadOverride("extendedReport");
         if (!ovr.equals("none")) {
             return Boolean.parseBoolean(ovr);
@@ -432,5 +433,33 @@ public class Settings {
         } catch (Exception ignore) {
             // ignore exception
         }
+    }
+
+    /**
+     * Checks if the client runs in debug mode.
+     *
+     * @return is running in debug mode?
+     */
+    public static boolean isDebug() {
+        String ovr = loadOverride("debug");
+        if (!ovr.equals("none")) {
+            return Boolean.parseBoolean(ovr);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the client runs in dev mode.
+     *
+     * @return is running in dev mode?
+     */
+    public static boolean devMode() {
+        String ovr = loadOverride("dev");
+        if (!ovr.equals("none")) {
+            return Boolean.parseBoolean(ovr);
+        }
+
+        return false;
     }
 }

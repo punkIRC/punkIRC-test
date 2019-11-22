@@ -1,6 +1,7 @@
 package de.rubenmaurer.punk;
 
 import de.rubenmaurer.punk.core.junit.PricefieldUnitListener;
+import de.rubenmaurer.punk.util.Template;
 import de.rubenmaurer.punk.util.Terminal;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
@@ -38,6 +39,7 @@ class TestLauncher {
      * Launches the irc tests.
      */
     static void launch() {
+        if (Settings.tests().isEmpty()) System.out.println(Terminal.center(Template.get("NO_TESTS").render()));
         List<DiscoverySelector> selectors = new LinkedList<>();
 
         Settings.tests().forEach(t -> selectors.add(DiscoverySelectors.selectClass(t)));

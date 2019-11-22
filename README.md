@@ -47,9 +47,6 @@ stopDelay=2             # Seconds to wait until your server is fully offline
 authLines=10            # The amount of lines your server sent during authentication
                         # A 'perfect' server sends 10 lines during authentication.
                         
-doVersionCheck=true     # Perform a version check every time the client starts
-                        # If a new version/ release is detected the client stops
-                        # See "Getting Started" where to find new releases
 ```
 
 Most of the values, probably can left untouched.
@@ -86,12 +83,6 @@ adjusted by command line parameter.
 ```cmd
 --java
 -j
-```
-
-##### Skip version check on start
-```cmd
---noVersioCheck
--nvc
 ```
 
 ##### Create a JUnit report

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Represents a single irc client.
@@ -124,9 +125,11 @@ public class Client {
         this.username = username;
         this.fullname = fullname;
 
-        Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
-        Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
-        this.connection = (ActorRef) Await.result(future, timeout.duration());
+        if (!Settings.isDebug()) {
+            Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
+            Future<Object> future = Patterns.ask(connectionManager, "connection-request", timeout);
+            this.connection = (ActorRef) Await.result(future, timeout.duration());
+        }
     }
 
     /**
@@ -176,22 +179,26 @@ public class Client {
      * @param code the code to search for
      * @return the list of responses
      */
-    public LinkedList<String> log(int code) {
-        String result = null;
+    private LinkedList<String> logOrEmpty(int code) {
+        String result;
+        LinkedList<String> resultList = new LinkedList<>();
         Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> future = Patterns.ask(connection, code, timeout);
 
         try {
             result = (String) Await.result(future, timeout.duration());
+            if (result != null) {
+                resultList = Arrays.stream(result.split(";")).filter(s -> !s.isEmpty()).collect(Collectors.toCollection(LinkedList::new));
+            }
         } catch (Exception e) {
             Terminal.debugErro(e.getMessage());
         }
 
-        if (result != null) {
-            return new LinkedList<>(Arrays.asList(result.split(";")));
+        if (Settings.devMode()) {
+            Terminal.devLog(resultList.toString());
         }
 
-        return new LinkedList<>();
+        return resultList;
     }
 
     /**
@@ -201,8 +208,25 @@ public class Client {
      * @param response the {@link Response} which code is used
      * @return the list of responses
      */
-    public LinkedList<String> log(Response response) {
-        return log(response.value);
+    public LinkedList<String> logOrEmpty(Response response) {
+        return logOrEmpty(response.value);
+    }
+
+    /**
+     * Retrieves a list of server replies with a specific response code.
+     * If no responses matching the given code are found, an exception occurs.
+     *
+     * @param response the {@link Response} which code is used
+     * @return the list of responses
+     */
+    public LinkedList<String> logOrThrow(Response response) {
+        LinkedList<String> result = logOrEmpty(response);
+
+        if (result.isEmpty()) {
+            throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        }
+
+        return result;
     }
 
     /**
@@ -354,18 +378,23 @@ public class Client {
      * @return the last trash line
      */
     public String trash() {
+        String result = "";
         Timeout t = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
         Future<Object> f = Patterns.ask(connection, "trash", t);
 
         try {
-            return ((String) Await.result(f, t.duration())).split("\r\n")[0];
+            result = ((String) Await.result(f, t.duration())).split("\r\n")[0];
         } catch (Exception e) {
             if (Settings.debug()) {
                 System.err.println(Template.get("DEBUG").single("message", e.getMessage()).render());
             }
         }
 
-        return "";
+        if (Settings.devMode()) {
+            Terminal.devLog(result);
+        }
+
+        return result;
     }
 
     /**

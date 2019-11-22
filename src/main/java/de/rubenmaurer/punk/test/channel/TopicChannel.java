@@ -36,8 +36,8 @@ public class TopicChannel extends BaseTest {
         if (Session.serverIsAlive()) {
             c.authenticateAndJoin(channel);
 
-            c.sendAndReceive(Utilities.setTopic(channel, topic));
-            c.sendAndReceive(Utilities.getTopic(channel));
+            c.send(Utilities.setTopic(channel, topic));
+            c.sendAndReceive(Utilities.getTopic(channel), 2);
         }
 
         Evaluation.getTopic(c, channel, topic);

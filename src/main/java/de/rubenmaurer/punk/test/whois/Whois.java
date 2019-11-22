@@ -30,9 +30,9 @@ public class Whois extends BaseTest {
 
         if (Session.serverIsAlive()) {
             c.authenticate();
-            c.sendAndReceive("WHOIS herman", 3);
+            c.sendAndReceive("WHOIS herman", 1);
         }
 
-        Evaluation.noSuchNick(c);
+        Evaluation.noSuchNick(c, "herman");
     }
 }

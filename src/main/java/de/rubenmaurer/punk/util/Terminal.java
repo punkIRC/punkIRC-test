@@ -188,4 +188,12 @@ public class Terminal {
     public static void debugErro(String message) {
         System.err.println(Template.erro(message));
     }
+
+    public static void devLog(String message) {
+        System.err.println(Template.log("DEV", message));
+    }
+
+    public static void parserLog(String message) {
+        System.err.println(Template.log("PARSER", message));
+    }
 }

@@ -2,8 +2,11 @@ package de.rubenmaurer.punk.evaluation.antlr;
 
 import de.rubenmaurer.punk.IRCLexer;
 import de.rubenmaurer.punk.IRCParser;
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.Response;
+import de.rubenmaurer.punk.util.Template;
+import de.rubenmaurer.punk.util.Terminal;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -52,24 +55,25 @@ public class Parser {
      * @param values collection of values needed for the evaluation
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
-        if (!message.equals("")) {
-            CharStream stream = CharStreams.fromString(message);
+        if (message.isEmpty()) throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        if (Settings.devMode()) Terminal.parserLog(message);
 
-            IRCLexer lexer = new IRCLexer(stream);
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
+        CharStream stream = CharStreams.fromString(message);
 
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
+        IRCLexer lexer = new IRCLexer(stream);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-            IRCParser parser = new IRCParser(tokens);
-            parser.removeErrorListeners();
-            parser.addErrorListener(PricefieldErrorListener.INSTANCE);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            ParseTreeWalker walker = new ParseTreeWalker();
-            walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), tree(parser));
-        }
+        IRCParser parser = new IRCParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(PricefieldErrorListener.INSTANCE);
 
-        ruleID = -1;
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(new PricefieldGrammarListener(sender, receiver, code, values), tree(parser));
+
+        reset();
     }
 
     /**

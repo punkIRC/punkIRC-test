@@ -6,7 +6,9 @@ import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Used for call the {@link Parser} and parse received messages.
@@ -59,16 +61,16 @@ public class Evaluation {
      * @param values collection of values needed for evaluation
      */
     public static void welcome(Client sender, HashMap<String, String> values) {
-        Parser.parse(sender, Response.WELCOME, sender.log(Response.WELCOME).getLast());
-        Parser.parse(sender, Response.YOURHOST, sender.log(Response.YOURHOST).getLast());
-        Parser.parse(sender, Response.CREATED, sender.log(Response.CREATED).getLast());
-        Parser.parse(sender, Response.MY_INFO, sender.log(Response.MY_INFO).getLast());
+        Parser.parse(sender, Response.WELCOME, sender.logOrThrow(Response.WELCOME).getLast());
+        Parser.parse(sender, Response.YOURHOST, sender.logOrThrow(Response.YOURHOST).getLast());
+        Parser.parse(sender, Response.CREATED, sender.logOrThrow(Response.CREATED).getLast());
+        Parser.parse(sender, Response.MY_INFO, sender.logOrThrow(Response.MY_INFO).getLast());
 
-        Parser.parse(sender, Response.LUSER_CLIENT, sender.log(Response.LUSER_CLIENT).getLast(), values);
-        Parser.parse(sender, Response.LUSER_OP, sender.log(Response.LUSER_OP).getLast(), values);
-        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.log(Response.LUSER_UNKNOWN).getLast(), values);
-        Parser.parse(sender, Response.LUSER_CHANNEL, sender.log(Response.LUSER_CHANNEL).getLast(), values);
-        Parser.parse(sender, Response.LUSER_ME, sender.log(Response.LUSER_ME).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CLIENT, sender.logOrThrow(Response.LUSER_CLIENT).getLast(), values);
+        Parser.parse(sender, Response.LUSER_OP, sender.logOrThrow(Response.LUSER_OP).getLast(), values);
+        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.logOrThrow(Response.LUSER_UNKNOWN).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CHANNEL, sender.logOrThrow(Response.LUSER_CHANNEL).getLast(), values);
+        Parser.parse(sender, Response.LUSER_ME, sender.logOrThrow(Response.LUSER_ME).getLast(), values);
     }
 
     /**
@@ -91,9 +93,9 @@ public class Evaluation {
      * @param target the who target
      */
     public static void whois(Client sender, Client target) {
-        Parser.parse(sender, target, Response.WHO_IS_USER, sender.log(Response.WHO_IS_USER).getLast());
-        Parser.parse(sender, target, Response.WHO_IS_SERVER, sender.log(Response.WHO_IS_SERVER).getLast());
-        Parser.parse(sender, target, Response.END_OF_WHO_IS, sender.log(Response.END_OF_WHO_IS).getLast());
+        Parser.parse(sender, target, Response.WHO_IS_USER, sender.logOrThrow(Response.WHO_IS_USER).getLast());
+        Parser.parse(sender, target, Response.WHO_IS_SERVER, sender.logOrThrow(Response.WHO_IS_SERVER).getLast());
+        Parser.parse(sender, target, Response.END_OF_WHO_IS, sender.logOrThrow(Response.END_OF_WHO_IS).getLast());
     }
 
     /**
@@ -160,9 +162,13 @@ public class Evaluation {
      * Tries to evaluate the last noSuchNick message.
      *
      * @param sender the sender
+     * @param target the target
      */
-    public static void noSuchNick(Client sender) {
-        //Parser.parse(client.lastResponse(), Parser.Type.NOSUCHNICK);
+    public static void noSuchNick(Client sender, String target) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("target", target);
+
+        Parser.parse(sender, Response.NO_SUCH_NICK, sender.logOrThrow(Response.NO_SUCH_NICK).getLast(), map);
     }
 
     /**
@@ -174,7 +180,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("nickname", sender.nickname());
 
-        Parser.parse(sender, Response.NICKNAME_IN_USE, sender.log(Response.NICKNAME_IN_USE).getLast(), values);
+        Parser.parse(sender, Response.NICKNAME_IN_USE, sender.logOrThrow(Response.NICKNAME_IN_USE).getLast(), values);
     }
 
     /**
@@ -211,11 +217,11 @@ public class Evaluation {
         values.put("channels", String.valueOf(channels));
         values.put("clients", String.valueOf(user + unknown));
 
-        Parser.parse(sender, Response.LUSER_CLIENT, sender.log(Response.LUSER_CLIENT).getLast(), values);
-        Parser.parse(sender, Response.LUSER_OP, sender.log(Response.LUSER_OP).getLast(), values);
-        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.log(Response.LUSER_UNKNOWN).getLast(), values);
-        Parser.parse(sender, Response.LUSER_CHANNEL, sender.log(Response.LUSER_CHANNEL).getLast(), values);
-        Parser.parse(sender, Response.LUSER_ME, sender.log(Response.LUSER_ME).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CLIENT, sender.logOrThrow(Response.LUSER_CLIENT).getLast(), values);
+        Parser.parse(sender, Response.LUSER_OP, sender.logOrThrow(Response.LUSER_OP).getLast(), values);
+        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.logOrThrow(Response.LUSER_UNKNOWN).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CHANNEL, sender.logOrThrow(Response.LUSER_CHANNEL).getLast(), values);
+        Parser.parse(sender, Response.LUSER_ME, sender.logOrThrow(Response.LUSER_ME).getLast(), values);
     }
 
     /**
@@ -228,9 +234,9 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("message", message);
 
-        Parser.parse(sender, Response.MOTD_START, sender.log(Response.MOTD_START).getLast(), values);
-        Parser.parse(sender, Response.MOTD, sender.log(Response.MOTD).getLast(), values);
-        Parser.parse(sender, Response.END_OF_MOTD, sender.log(Response.END_OF_MOTD).getLast(), values);
+        Parser.parse(sender, Response.MOTD_START, sender.logOrThrow(Response.MOTD_START).getLast(), values);
+        Parser.parse(sender, Response.MOTD, sender.logOrThrow(Response.MOTD).getLast(), values);
+        Parser.parse(sender, Response.END_OF_MOTD, sender.logOrThrow(Response.END_OF_MOTD).getLast(), values);
     }
 
     /**
@@ -239,7 +245,7 @@ public class Evaluation {
      * @param sender the sender
      */
     public static void noMotd(Client sender) {
-        Parser.parse(sender, Response.NO_MOTD, sender.log(Response.NO_MOTD).getLast());
+        Parser.parse(sender, Response.NO_MOTD, sender.logOrThrow(Response.NO_MOTD).getLast());
     }
 
     /**
@@ -283,8 +289,8 @@ public class Evaluation {
         Parser.useRule(IRCParser.RULE_server_response);
         Parser.parse(sender, Response.NONE, sender.lastLines()[0], values);
 
-        Parser.parse(sender, Response.NAME_RPLY, sender.log(Response.NAME_RPLY).getLast(), values);
-        Parser.parse(sender, Response.END_OF_NAMES, sender.log(Response.END_OF_NAMES).getLast(), values);
+        Parser.parse(sender, Response.NAME_RPLY, sender.logOrThrow(Response.NAME_RPLY).getLast(), values);
+        Parser.parse(sender, Response.END_OF_NAMES, sender.logOrThrow(Response.END_OF_NAMES).getLast(), values);
     }
 
     /**
@@ -302,7 +308,7 @@ public class Evaluation {
         values.put("topic", expected);
         values.put("channel", String.format("#%s", channel));
 
-        Parser.parse(sender, Response.TOPIC, sender.log(Response.TOPIC).getLast(), values);
+        Parser.parse(sender, Response.TOPIC, sender.logOrThrow(Response.TOPIC).getLast(), values);
     }
 
     /**
@@ -323,12 +329,13 @@ public class Evaluation {
      * @param channel the channel
      */
     public static void noSuchChannel(Client sender, String channel) {
-        Response r = Response.NO_SUCH_NICK;
-
         HashMap<String, String> map = new HashMap<>();
         map.put("target", String.format("#%s", channel));
 
-        Parser.parse(sender, sender, r, sender.log(r).getLast(), map);
+        List<String> log = sender.logOrEmpty(Response.NO_SUCH_NICK);
+        log.addAll(sender.logOrEmpty(Response.NO_SUCH_CHANNEL));
+
+        Parser.parse(sender, sender, log.stream().anyMatch(s -> s.contains(String.valueOf(Response.NO_SUCH_NICK.value))) ? Response.NO_SUCH_NICK : Response.NO_SUCH_CHANNEL, log.get(0), map);
     }
 
     /**
@@ -343,7 +350,7 @@ public class Evaluation {
         HashMap<String, String> map = new HashMap<>();
         map.put("channel", String.format("#%s", channel));
 
-        Parser.parse(sender, sender, r, sender.log(r).getLast(), map);
+        Parser.parse(sender, sender, r, sender.logOrThrow(r).getLast(), map);
     }
 
     /**
@@ -370,7 +377,7 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("channel", String.format("#%s", channel));
 
-        Parser.parse(sender, Response.NOT_ON_CHANNEL, sender.log(Response.NOT_ON_CHANNEL).getLast(), values);
+        Parser.parse(sender, Response.NOT_ON_CHANNEL, sender.logOrThrow(Response.NOT_ON_CHANNEL).getLast(), values);
     }
 
     /**
@@ -385,8 +392,12 @@ public class Evaluation {
         values.put("channel", String.format("#%s", channel));
         values.put("topic", topic);
 
+        List<String> log = sender.logOrEmpty(Response.TOPIC);
+
         Parser.useRule(IRCParser.RULE_topic);
-        Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
+        Parser.parse(sender, Response.TOPIC, log.isEmpty()
+                ? Arrays.stream(sender.lastLines()).filter(s -> s.contains("TOPIC")).findFirst().get()
+                : log.get(0), values);
     }
 
     /**
@@ -402,11 +413,11 @@ public class Evaluation {
         values.put("topic", expected);
 
         if (!expected.isEmpty()) {
-            Parser.parse(sender, Response.TOPIC, sender.log(Response.TOPIC).getLast(), values);
+            Parser.parse(sender, Response.TOPIC, sender.logOrThrow(Response.TOPIC).getLast(), values);
             return;
         }
 
-        Parser.parse(sender, Response.NO_TOPIC, sender.log(Response.NO_TOPIC).getLast(), values);
+        Parser.parse(sender, Response.NO_TOPIC, sender.logOrThrow(Response.NO_TOPIC).getLast(), values);
     }
 
     /**
@@ -423,8 +434,11 @@ public class Evaluation {
         values.put("topic", expected);
         values.put("user", String.valueOf(user));
 
-        Parser.parse(sender, Response.LIST, sender.log(Response.LIST).getLast(), values);
-        Parser.parse(sender, Response.LIST_END, sender.log(Response.LIST_END).getLast());
+        if (user > 1) {
+            Parser.parse(sender, Response.LIST, sender.logOrThrow(Response.LIST).getLast(), values);
+        }
+
+        Parser.parse(sender, Response.LIST_END, sender.logOrThrow(Response.LIST_END).getLast());
     }
 
     /**
@@ -458,8 +472,8 @@ public class Evaluation {
         values.put("user_who", target.username());
         values.put("fullname_who", target.fullname());
 
-        Parser.parse(sender, Response.WHO_RPLY, sender.log(Response.WHO_RPLY).get(index), values);
-        Parser.parse(sender, Response.END_OF_WHO, sender.log(Response.END_OF_WHO).getLast(), values);
+        Parser.parse(sender, Response.WHO_RPLY, sender.logOrThrow(Response.WHO_RPLY).get(index), values);
+        Parser.parse(sender, Response.END_OF_WHO, sender.logOrThrow(Response.END_OF_WHO).getLast(), values);
     }
 
     /**
@@ -472,7 +486,6 @@ public class Evaluation {
         HashMap<String, String> values = new HashMap<>();
         values.put("message", message);
 
-        System.err.println(Arrays.toString(sender.lastLines()));
         Parser.parse(sender, Response.NONE, sender.lastResponse(), values);
     }
 }

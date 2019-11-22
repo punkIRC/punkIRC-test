@@ -33,6 +33,7 @@ public enum Response {
     MOTD_START (375),
     END_OF_MOTD (376),
     NO_SUCH_NICK (401),
+    NO_SUCH_CHANNEL(403),
     CANNOT_SEND_TO_CHANNEL (404),
     UNKNOWN_COMMAND (421),
     NO_MOTD (422),

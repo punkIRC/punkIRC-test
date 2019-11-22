@@ -5,35 +5,17 @@ import de.rubenmaurer.punk.util.Terminal;
 public class Version {
     public static final Version NONE = new Version();
 
-    private int major;
+    public static boolean VALID = true;
 
-    public int major() {
-        return major;
-    }
+    private int major;
 
     private int minor;
 
-    public int minor() {
-        return minor;
-    }
-
     private int patch;
-
-    public int patch() {
-        return patch;
-    }
 
     private String prefix = "";
 
-    public String prefix() {
-        return prefix;
-    }
-
     private String suffix = "";
-
-    public String suffix() {
-        return suffix;
-    }
 
     private Version(String data) {
         try {
@@ -76,6 +58,7 @@ public class Version {
             }
         } catch (Exception e) {
             prefix = "";
+            VALID = false;
             throw new VersionParseException(data, e.getCause());
         }
 

@@ -1,18 +1,13 @@
 package de.rubenmaurer.punk.util;
 
 import de.rubenmaurer.punk.Settings;
+import de.rubenmaurer.punk.test.TestOverview;
 import de.rubenmaurer.punk.test.channel.*;
 import de.rubenmaurer.punk.test.connection.BasicConnection;
 import de.rubenmaurer.punk.test.connection.FullConnection;
 import de.rubenmaurer.punk.test.connection.MultiUserConnection;
 import de.rubenmaurer.punk.test.connection.QuitConnection;
-import de.rubenmaurer.punk.test.motd.Motd;
-import de.rubenmaurer.punk.test.ping.Ping;
-import de.rubenmaurer.punk.test.ping.Pong;
 import de.rubenmaurer.punk.test.privmsg.NoticePrivmsg;
-import de.rubenmaurer.punk.test.robustness.Robustness;
-import de.rubenmaurer.punk.test.unknown.Unknown;
-import de.rubenmaurer.punk.test.whois.Whois;
 import de.rubenmaurer.punk.util.version.Version;
 
 import java.util.LinkedList;
@@ -32,7 +27,7 @@ public class CLI {
      */
     public static void doVersionCheck() {
         Version onlineVersion = Settings.getCurrentVersion();
-        if (onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
+        if (!Settings.devMode() && onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
             System.out.print(Terminal.getDivider());
             System.out.print(Terminal.center(Template.get("VERSION_UPDATE_MESSAGE").render()));
             System.out.print(
@@ -95,13 +90,23 @@ public class CLI {
             }
 
             // Version Check
-            if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
+            /*if (command.equals("--noVersionCheck") || command.equals("-nvc")) {
                 Settings.storeOverride("doVersionCheck", "false");
-            }
+            }*/
 
             // JUnit report
             if (command.equals("--report") || command.equals("-r")) {
-                Settings.storeOverride("extendedReport", "True");
+                Settings.storeOverride("extendedReport", "true");
+            }
+
+            // Enable debug mode
+            if (command.equals("--debug")) {
+                Settings.storeOverride("debug", "true");
+            }
+
+            // Enable developer mode
+            if (command.equals("--dev")) {
+                Settings.storeOverride("dev", "true");
             }
         }
     }
@@ -133,30 +138,15 @@ public class CLI {
                 classes.add(QuitConnection.class);
             }
 
-            if (cls.equals("MOTD") || cls.equals("All")) {
-                classes.add(Motd.class);
-            }
-
-            if (cls.equals("Ping") || cls.equals("All")) {
-                classes.add(Ping.class);
-                classes.add(Pong.class);
-            }
-
             if (cls.equals("PrivateMsg") || cls.equals("All")) {
                 classes.add(NoticePrivmsg.class);
             }
 
-            if (cls.equals("Robustness") || cls.equals("All")) {
-                classes.add(Robustness.class);
-            }
-
-            if (cls.equals("Unknown") || cls.equals("All")) {
-                classes.add(Unknown.class);
-            }
-
-            if (cls.equals("WhoIs") || cls.equals("All")) {
-                classes.add(Whois.class);
-            }
+            TestOverview.CLASSES.forEach(cs -> {
+                if (cs.getSimpleName().equals(cls)) {
+                    classes.add(cs);
+                }
+            });
         }
 
         return classes;
