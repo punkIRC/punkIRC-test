@@ -105,7 +105,7 @@ A list with all available tests follows.
 ```
 Channel
 Connection
-MOTD
+Motd
 Ping
 PrivateMsg
 Robustness
