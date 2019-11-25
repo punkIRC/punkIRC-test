@@ -96,7 +96,7 @@ public class Client {
      */
     public String lastResponse() {
         String[] splitted = lastResponse.split("\r\n");
-        return splitted[splitted.length - 1];
+        return splitted[splitted.length - 1].intern();
     }
 
     /**
@@ -195,6 +195,7 @@ public class Client {
         }
 
         if (Settings.devMode()) {
+            Terminal.devLog(String.format("Looking for message with code: %d", code));
             Terminal.devLog(resultList.toString());
         }
 
@@ -223,6 +224,10 @@ public class Client {
         LinkedList<String> result = logOrEmpty(response);
 
         if (result.isEmpty()) {
+            if (response != Response.NONE) {
+                throw new RuntimeException(Template.get("EMPTY_STRING_MISSING_CODE").single("code", Integer.toString(response.value)).render());
+            }
+
             throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
         }
 

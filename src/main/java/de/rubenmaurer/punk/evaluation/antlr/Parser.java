@@ -55,7 +55,7 @@ public class Parser {
      * @param values collection of values needed for the evaluation
      */
     public static void parse(Client sender, Client receiver, Response code, String message, Map<String, String> values) {
-        if (message.isEmpty()) throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
+        if (message.trim().isEmpty()) throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
         if (Settings.devMode()) Terminal.parserLog(message);
 
         CharStream stream = CharStreams.fromString(message);
