@@ -66,11 +66,11 @@ public class Evaluation {
         Parser.parse(sender, Response.CREATED, sender.logOrThrow(Response.CREATED).getLast());
         Parser.parse(sender, Response.MY_INFO, sender.logOrThrow(Response.MY_INFO).getLast());
 
-        Parser.parse(sender, Response.LUSER_CLIENT, sender.logOrThrow(Response.LUSER_CLIENT).getLast(), values);
-        Parser.parse(sender, Response.LUSER_OP, sender.logOrThrow(Response.LUSER_OP).getLast(), values);
-        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.logOrThrow(Response.LUSER_UNKNOWN).getLast(), values);
-        Parser.parse(sender, Response.LUSER_CHANNEL, sender.logOrThrow(Response.LUSER_CHANNEL).getLast(), values);
-        Parser.parse(sender, Response.LUSER_ME, sender.logOrThrow(Response.LUSER_ME).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CLIENT, sender.logOrEmpty(Response.LUSER_CLIENT).getLast(), values);
+        Parser.parse(sender, Response.LUSER_OP, sender.logOrEmpty(Response.LUSER_OP).getLast(), values);
+        Parser.parse(sender, Response.LUSER_UNKNOWN, sender.logOrEmpty(Response.LUSER_UNKNOWN).getLast(), values);
+        Parser.parse(sender, Response.LUSER_CHANNEL, sender.logOrEmpty(Response.LUSER_CHANNEL).getLast(), values);
+        Parser.parse(sender, Response.LUSER_ME, sender.logOrEmpty(Response.LUSER_ME).getLast(), values);
     }
 
     /**
