@@ -12,7 +12,9 @@ VERSION_UPDATE_MESSAGE() ::= "New version available!"
 VERSION_UPDATE(old, new) ::= "Your version is '<old>', current version is '<new>'"
 VERSION_PARSE_EXCEPTION(versionString) ::= "Unable to parse '<versionString>'! Fallback to 'NONE' version!"
 
+NO_EMPTY(msg) ::= "Found '<msg>' but expected empty string."
 EMPTY_STRING_FOR_PARSER() ::= "Tried to parse an empty string!"
+EMPTY_STRING_MISSING_CODE(code) ::= "No message with response code <code> found!"
 NO_TESTS() ::= "No tests selected!"
 
 //Debugging  log messages

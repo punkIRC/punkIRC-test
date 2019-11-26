@@ -4,9 +4,9 @@ import de.rubenmaurer.punk.IRCParser;
 import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.core.facade.Client;
 import de.rubenmaurer.punk.evaluation.antlr.Parser;
+import de.rubenmaurer.punk.util.Template;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -318,7 +318,7 @@ public class Evaluation {
      */
     public static void empty(Client client) {
         if (!client.last().isEmpty()) {
-            throw new RuntimeException("Found a response where no should be!");
+            throw new RuntimeException(Template.get("NO_EMPTY").single("msg", client.last()).render());
         }
     }
 
