@@ -132,6 +132,7 @@ public class ConnectionHandler extends AbstractActor {
                 .matchEquals("connected", s -> getSender().tell(remoteActor != null, self()))
                 .matchEquals("last", s -> getSender().tell(response, self()))
                 .matchEquals("trash", s -> getSender().tell(trash.getLast(), self()))
+                .matchEquals("clear", s -> response = "")
                 .match(Tcp.Connected.class, s -> {
                     getSender().tell(TcpMessage.register(getSelf()), getSelf());
                     this.remoteActor = getSender();

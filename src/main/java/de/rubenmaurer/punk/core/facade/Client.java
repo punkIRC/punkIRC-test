@@ -87,7 +87,7 @@ public class Client {
     /**
      * The last received response.
      */
-    private String lastResponse;
+    String lastResponse;
 
     /**
      * Getter for the last response.
@@ -96,7 +96,7 @@ public class Client {
      */
     public String lastResponse() {
         String[] splitted = lastResponse.split("\r\n");
-        return splitted[splitted.length - 1].intern();
+        return splitted[splitted.length - 1];
     }
 
     /**
@@ -225,7 +225,10 @@ public class Client {
 
         if (result.isEmpty()) {
             if (response != Response.NONE) {
-                throw new RuntimeException(Template.get("EMPTY_STRING_MISSING_CODE").single("code", Integer.toString(response.value)).render());
+                throw new RuntimeException(
+                        Template.get("EMPTY_STRING_MISSING_CODE")
+                                .single("code", response.value < 100 ? String.format("%03d", response.value) : Integer.toString(response.value)).render()
+                );
             }
 
             throw new RuntimeException(Template.get("EMPTY_STRING_FOR_PARSER").render());
@@ -293,9 +296,12 @@ public class Client {
      */
     public String[] sendAndReceive(String message, int expectedLines, boolean sendLast) {
         if (!isConnected()) connect();
+        lastResponse = "";
         lastLines = new String[]{ "" };
 
         if (isConnected()) {
+            connection.tell("clear", ActorRef.noSender());
+
             Timeout timeout = new Timeout(Settings.timeout(), TimeUnit.SECONDS);
             Future<Object> future = Patterns.ask(connection, Ask.create(message, expectedLines), timeout);
 

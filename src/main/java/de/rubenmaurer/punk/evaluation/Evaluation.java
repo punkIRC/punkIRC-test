@@ -7,7 +7,6 @@ import de.rubenmaurer.punk.evaluation.antlr.Parser;
 import de.rubenmaurer.punk.util.Template;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
