@@ -27,7 +27,7 @@ public class CLI {
      */
     public static void doVersionCheck() {
         Version onlineVersion = Settings.getCurrentVersion();
-        if (!Settings.devMode() && onlineVersion != null && !Settings.version().equals(onlineVersion) && Settings.versionCheck()) {
+        if (!Settings.devMode() && onlineVersion != null && !Settings.version().equals(onlineVersion)) {
             System.out.print(Terminal.getDivider());
             System.out.print(Terminal.center(Template.get("VERSION_UPDATE_MESSAGE").render()));
             System.out.print(
@@ -39,8 +39,7 @@ public class CLI {
             );
 
             System.out.print(Terminal.getDivider());
-
-            System.exit(42);
+            System.exit(-1);
         }
     }
 
