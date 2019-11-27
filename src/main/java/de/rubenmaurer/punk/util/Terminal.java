@@ -5,7 +5,9 @@ import de.rubenmaurer.punk.Settings;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -158,6 +160,15 @@ public class Terminal {
                             .single("message", message)
                             .single("place", source).render()));
         }
+    }
+
+    public static void printLastResponse(String... responses) {
+        if (responses == null) return;
+
+        System.err.println(Template.get("LAST_RESPONSE")
+                .single("response", responses)
+                .single("date", new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+                .single("count", String.valueOf(responses.length)).render());
     }
 
     /* === LOGGING === */

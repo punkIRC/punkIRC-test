@@ -7,6 +7,7 @@ UNABLE_TO_CREATE_TEST_DIR() ::= "ERROR: Unable to create the test directory!"
 
 LOG_ERROR(timestamp, message, place) ::= "[<place>@<timestamp>]: <message>"
 TERMINATE_MESSAGE(id) ::= "See 'logs/<id>/pricefield.log' for detailed information."
+MISSING_LINES(lineCount, actual) ::= "Expecting <lineCount> lines of response, but only got <actual> line!"
 
 VERSION_UPDATE_MESSAGE() ::= "New version available!"
 VERSION_UPDATE(old, new) ::= "Your version is '<old>', current version is '<new>'"
@@ -20,3 +21,8 @@ NO_TESTS() ::= "No tests selected!"
 //Debugging  log messages
 DEBUG(date, type, message) ::= "[<date>]  DEBUG  <type>: <message>"
 LOG(type, message) ::= "[<type>] <message>"
+LAST_RESPONSE(date, response, count) ::= <<[<date>]  DEBUG  LAST_RESPONSE:
+    <response; separator=",\r\n">
+    LINE_COUNT: <count>
+
+>>
