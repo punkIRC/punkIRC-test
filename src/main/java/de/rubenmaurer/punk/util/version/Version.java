@@ -1,11 +1,10 @@
 package de.rubenmaurer.punk.util.version;
 
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.util.Terminal;
 
 public class Version {
     public static final Version NONE = new Version();
-
-    public static boolean VALID = true;
 
     private int major;
 
@@ -58,8 +57,9 @@ public class Version {
             }
         } catch (Exception e) {
             prefix = "";
-            VALID = false;
-            throw new VersionParseException(data, e.getCause());
+            if (!Settings.devMode()) {
+                throw new VersionParseException(data, e.getCause());
+            }
         }
 
         return this;

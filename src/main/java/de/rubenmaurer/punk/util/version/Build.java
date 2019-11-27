@@ -1,5 +1,6 @@
 package de.rubenmaurer.punk.util.version;
 
+import de.rubenmaurer.punk.Settings;
 import de.rubenmaurer.punk.util.Terminal;
 
 public class Build {
@@ -24,7 +25,9 @@ public class Build {
         try {
             build = Integer.parseInt(data);
         } catch (Exception e) {
-            throw new VersionParseException(data, e.getCause());
+            if (!Settings.isDebug()) {
+                throw new VersionParseException(data, e.getCause());
+            }
         }
     }
 
