@@ -1,7 +1,6 @@
 package de.rubenmaurer.punk.core.facade;
 
 import akka.actor.ActorRef;
-import akka.actor.PoisonPill;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import de.rubenmaurer.punk.Settings;
@@ -196,7 +195,6 @@ public class Client {
 
         if (Settings.devMode()) {
             Terminal.devLog(String.format("Looking for message with code: %d", code));
-            Terminal.devLog(resultList.toString());
         }
 
         return resultList;
@@ -235,14 +233,6 @@ public class Client {
         }
 
         return result;
-    }
-
-    /**
-     * Terminates the {@link de.rubenmaurer.punk.core.akka.ConnectionHandler} used for
-     * communication with the irc server.
-     */
-    public void disconnect() {
-        this.connection.tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
 
     /**
@@ -318,11 +308,10 @@ public class Client {
                         lastLines = lastResponse.split(Settings.delimiter());
                     } catch (Exception e) {
                         Terminal.debugErro(e.getMessage());
-                        Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
                     }
 
-                    Terminal.debugErro(exception.getMessage());
-                    Terminal.printError(lastResponse, Thread.currentThread().getStackTrace()[3].getMethodName());
+                    Terminal.debugErro(Template.get("MISSING_LINES").single("lineCount", expectedLines).single("actual", lastLines.length).render());
+                    Terminal.printLastResponse(lastLines);
                 }
             }
 

@@ -104,7 +104,7 @@ public class Template {
      * @param value the value
      * @return the rendered template
      */
-    public Template single(String key, String value) {
+    public Template single(String key, Object value) {
         template.add(key, value);
         return this;
     }

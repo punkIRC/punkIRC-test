@@ -108,7 +108,7 @@ public class ConnectionHandler extends AbstractActor {
         Matcher matcher = Pattern.compile(" \\d{3} ").matcher(message);
         if (matcher.find()) {
             String match = matcher.group().trim();
-            return Integer.valueOf(match);
+            return Integer.parseInt(match);
         }
 
         return -1;
