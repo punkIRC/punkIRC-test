@@ -84,7 +84,7 @@ public class NoticePrivmsg extends BaseTest {
         if (Session.serverIsAlive()) {
             c1.authenticate();
 
-            c1.sendAndReceive(Utilities.notice(c2, "Hello"));
+            c1.send(Utilities.notice(c2, "Hello"));
         }
 
         Evaluation.empty(c1);

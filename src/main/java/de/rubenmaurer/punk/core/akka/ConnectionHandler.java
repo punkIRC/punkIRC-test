@@ -158,6 +158,8 @@ public class ConnectionHandler extends AbstractActor {
                 .match(Tcp.ConnectionClosed.class, msg -> getContext().stop(getSelf()))
                 .match(Tcp.Received.class, msg -> {
                     String incoming = msg.data().decodeString("US-ASCII");
+                    Terminal.debugRecv(incoming);
+
                     String[] splitted = incoming.split("\r\n");
 
                     for (String split : splitted) {

@@ -347,7 +347,7 @@ public class Client {
      * @param message the message to send
      */
     public void send(String message) {
-        sendAndReceive(message, 0);
+        sendAndReceive(message, 0); //TODO: disable timeouts
     }
 
     /**
