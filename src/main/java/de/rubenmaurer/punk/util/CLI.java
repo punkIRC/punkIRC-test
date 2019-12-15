@@ -119,9 +119,13 @@ public class CLI {
     private static List<Class> storeTests(String tests) {
         List<Class> classes = new LinkedList<>();
 
-        for (String cls : tests.split(" ")) {
-            if (cls.equals("Channel") || cls.equals("All")) {
-                classes.add(AssigmentChannel.class);
+        for (String cls : tests.split(" +")) {
+            if (cls.equals("All")) {
+                classes.addAll(TestOverview.CLASSES);
+            }
+
+            if (cls.equals("Channel")) {
+                classes.add(AssignmentChannel.class);
                 classes.add(JoinChannel.class);
                 classes.add(ListChannel.class);
                 classes.add(PartChannel.class);
@@ -130,14 +134,14 @@ public class CLI {
                 classes.add(WhoChannel.class);
             }
 
-            if (cls.equals("Connection") || cls.equals("All")) {
+            if (cls.equals("Connection")) {
                 classes.add(BasicConnection.class);
                 classes.add(FullConnection.class);
                 classes.add(MultiUserConnection.class);
                 classes.add(QuitConnection.class);
             }
 
-            if (cls.equals("PrivateMsg") || cls.equals("All")) {
+            if (cls.equals("PrivateMsg")) {
                 classes.add(NoticePrivmsg.class);
             }
 

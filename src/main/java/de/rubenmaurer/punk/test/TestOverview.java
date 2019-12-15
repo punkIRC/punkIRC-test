@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class TestOverview {
     public static final List<Class> CLASSES = Stream.of(
-            AssigmentChannel.class,
+            AssignmentChannel.class,
             JoinChannel.class,
             ListChannel.class,
             PartChannel.class,
