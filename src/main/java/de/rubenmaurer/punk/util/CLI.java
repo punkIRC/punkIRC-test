@@ -7,7 +7,13 @@ import de.rubenmaurer.punk.test.connection.BasicConnection;
 import de.rubenmaurer.punk.test.connection.FullConnection;
 import de.rubenmaurer.punk.test.connection.MultiUserConnection;
 import de.rubenmaurer.punk.test.connection.QuitConnection;
+import de.rubenmaurer.punk.test.motd.Motd;
+import de.rubenmaurer.punk.test.ping.Ping;
+import de.rubenmaurer.punk.test.ping.Pong;
 import de.rubenmaurer.punk.test.privmsg.NoticePrivmsg;
+import de.rubenmaurer.punk.test.robustness.Robustness;
+import de.rubenmaurer.punk.test.unknown.Unknown;
+import de.rubenmaurer.punk.test.whois.Whois;
 import de.rubenmaurer.punk.util.version.Version;
 
 import java.util.LinkedList;
@@ -120,7 +126,12 @@ public class CLI {
         List<Class> classes = new LinkedList<>();
 
         for (String cls : tests.split(" ")) {
-            if (cls.equals("Channel") || cls.equals("All")) {
+            if (cls.equals("All")) {
+                classes.addAll(TestOverview.CLASSES);
+                break;
+            }
+
+            if (cls.equals("Channel")) {
                 classes.add(AssigmentChannel.class);
                 classes.add(JoinChannel.class);
                 classes.add(ListChannel.class);
@@ -130,22 +141,37 @@ public class CLI {
                 classes.add(WhoChannel.class);
             }
 
-            if (cls.equals("Connection") || cls.equals("All")) {
+            if (cls.equals("Connection")) {
                 classes.add(BasicConnection.class);
                 classes.add(FullConnection.class);
                 classes.add(MultiUserConnection.class);
                 classes.add(QuitConnection.class);
             }
 
-            if (cls.equals("PrivateMsg") || cls.equals("All")) {
+            if (cls.equals("MOTD")) {
+                classes.add(Motd.class);
+            }
+
+            if (cls.equals("Ping")) {
+                classes.add(Ping.class);
+                classes.add(Pong.class);
+            }
+
+            if (cls.equals("PrivateMsg")) {
                 classes.add(NoticePrivmsg.class);
             }
 
-            TestOverview.CLASSES.forEach(cs -> {
-                if (cs.getSimpleName().equals(cls)) {
-                    classes.add(cs);
-                }
-            });
+            if (cls.equals("Robustness")) {
+                classes.add(Robustness.class);
+            }
+
+            if (cls.equals("Unknown")) {
+                classes.add(Unknown.class);
+            }
+
+            if (cls.equals("WhoIs")) {
+                classes.add(Whois.class);
+            }
         }
 
         return classes;

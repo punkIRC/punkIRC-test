@@ -213,13 +213,13 @@ part
     : server_response WHITESPACE 'PART' WHITESPACE channel
     ;
 
+no_topic
+    : server_response WHITESPACE channel WHITESPACE DLIMIT 'No topic is set'
+    ;
+
 topic
     : server_response WHITESPACE 'TOPIC' WHITESPACE channel WHITESPACE DLIMIT message
     | server_response WHITESPACE channel WHITESPACE DLIMIT message
-    ;
-
-no_topic
-    : server_response WHITESPACE channel WHITESPACE DLIMIT 'No topic is set'
     ;
 
 /* === LIST === */
