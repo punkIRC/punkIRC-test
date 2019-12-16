@@ -79,7 +79,7 @@ public class JoinChannel extends BaseTest {
 
             c2.authenticate();
             c2.sendAndReceive(Utilities.joinChannel(channel));
-            Evaluation.join(c2, channel, c1.nickname(), c2.nickname());
+            Evaluation.join(c2, channel, c1.nickname(), c2.nickname()); //TODO: add expected lines
         }
 
         //Evaluation.join(c1, channel, c1.nickname(), c2.nickname());

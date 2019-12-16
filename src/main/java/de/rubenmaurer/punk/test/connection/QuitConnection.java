@@ -37,7 +37,7 @@ public class QuitConnection extends BaseTest {
         }
 
         Evaluation.quit(c, msg);
-        assertFalse(c.isConnected());
+        assertFalse(c.isConnected()); //TODO: abstract and add sleep
     }
 
     @Test

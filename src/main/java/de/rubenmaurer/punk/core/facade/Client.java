@@ -310,7 +310,10 @@ public class Client {
                         Terminal.debugErro(e.getMessage());
                     }
 
-                    Terminal.debugErro(Template.get("MISSING_LINES").single("lineCount", expectedLines).single("actual", lastLines.length).render());
+                    if (expectedLines < lastLines.length) {
+                        Terminal.debugErro(Template.get("MISSING_LINES").single("lineCount", expectedLines).single("actual", lastLines.length).render());
+                    }
+
                     Terminal.printLastResponse(lastLines);
                 }
             }

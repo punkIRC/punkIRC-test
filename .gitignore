@@ -120,3 +120,4 @@ buildNumber.properties
 /.pricefield/chirc
 /.pricefield/config.properties
 /.pricefield/logs/results.xml
+*.xml

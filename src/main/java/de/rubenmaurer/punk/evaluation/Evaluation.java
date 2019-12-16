@@ -126,7 +126,7 @@ public class Evaluation {
         map.put("target", channel ? String.format("#%s", target) : target);
 
         Parser.useRule(IRCParser.RULE_private_message);
-        Parser.parse(sender, receiver, Response.NONE, receiver.trash(), map);
+        Parser.parse(sender, receiver, Response.NONE, receiver.trash(), map); //TODO: clear trash fom empty lines?
     }
 
     /**
