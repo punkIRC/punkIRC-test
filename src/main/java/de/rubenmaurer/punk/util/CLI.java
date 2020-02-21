@@ -31,6 +31,7 @@ public class CLI {
     /**
      * Look for a new version available.
      */
+    @Deprecated
     public static void doVersionCheck() {
         Version onlineVersion = Settings.getCurrentVersion();
         if (!Settings.devMode() && onlineVersion != null && !Settings.version().equals(onlineVersion)) {

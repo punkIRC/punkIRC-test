@@ -29,7 +29,7 @@ public class Pricefield {
         Settings.checkDirectoriesAndPipe();
 
         CLI.parseParameter(args);
-        CLI.doVersionCheck();
+        //CLI.doVersionCheck();
 
         Terminal.printHeader();
 
